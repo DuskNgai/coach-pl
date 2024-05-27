@@ -1,0 +1,17 @@
+name: coach-pl
+
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+  - pytorch
+  - torchvision
+  - pytorch-cuda
+  - lightning
+  - pip
+    - fvcore
+    - omegaconf

@@ -1,0 +1,43 @@
+DATASET:
+  NAME: null
+
+  TRAIN:
+    BATCH_SIZE: -1
+  VALIDATION:
+    BATCH_SIZE: -1
+  TEST:
+    BATCH_SIZE: -1
+
+DATALOADER:
+  NUM_WORKERS: 0
+  PIN_MEMORY: False
+
+MODEL:
+  NAME: null
+  DEVICE: "cuda"
+
+  CRITERION:
+    TYPE: null
+    NAME: null
+
+MODULE:
+  NAME: null
+
+TRAINER:
+  BENCHMARK: False
+  DETERMINISTIC: False
+
+  CLIP_GRAD:
+    ENABLED: False
+    ALGORITHM: null
+    VALUE: 0.0
+
+  DETECT_ANOMALY: False
+  LOG_EVERY_N_STEPS: -1
+  MAX_EPOCHS: -1
+  MIXED_PRECISION: False
+
+  MONITOR_METRIC: null
+
+SEED: -1
+OUTPUT_DIR: null
