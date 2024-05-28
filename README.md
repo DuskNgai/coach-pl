@@ -3,7 +3,7 @@
 Coach-pl is a PyTorch-Lightning based deep learning framework for training and evaluating models.
 It is designed to be easy to use and flexible, allowing for quick prototyping and experimentation.
 
-Note that the license of this project is **GPL-3.0**.
+Note that the license of this project is **GPL-2.0**.
 
 ## Setup
 
@@ -27,4 +27,3 @@ To use this package, one should create at least:
 1. a pytorch style dataset
 2. a pytorch-lightning style module
 3. a yaml configuration file
-

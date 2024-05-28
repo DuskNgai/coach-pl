@@ -8,8 +8,8 @@ CRITERION_REGISTRY.__doc__ = "Registry for the model."
 
 def build_criterion(cfg: CfgNode) -> torch.nn.Module:
     """
-    Build the criterion defined by `cfg.MODEL.CRITERION.TYPE`.
+    Build the criterion defined by `cfg.MODEL.CRITERION.NAME`.
     """
-    criterion_type = cfg.MODEL.CRITERION.TYPE
-    criterion = CRITERION_REGISTRY.get(criterion_type)(cfg)
+    criterion_name = cfg.MODEL.CRITERION.NAME
+    criterion = CRITERION_REGISTRY.get(criterion_name)(cfg)
     return criterion

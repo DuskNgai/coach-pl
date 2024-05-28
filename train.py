@@ -1,6 +1,9 @@
 import argparse
 import datetime
 from pathlib import Path
+import sys
+
+sys.path.append(Path.cwd().as_posix())
 
 from rich import print
 import pytorch_lightning as pl
@@ -20,8 +23,8 @@ def parse_args() -> argparse.ArgumentParser:
 
     parser.add_argument("--config-file", type=Path, metavar="FILE", required=True)
     parser.add_argument("--resume", action="store_true", help="Whether to attempt to resume from the checkpoint directory.")
-    parser.add_argument("--num_gpus", type=int, default=1, help="Number of GPUs per node for distributed training.")
-    parser.add_argument("--num_nodes", type=int, default=1, help="Number of nodes for distributed training.")
+    parser.add_argument("--num-gpus", type=int, default=1, help="Number of GPUs per node for distributed training.")
+    parser.add_argument("--num-nodes", type=int, default=1, help="Number of nodes for distributed training.")
     parser.add_argument("opts", nargs=argparse.REMAINDER, default=None, help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.")
 
     args = parser.parse_args()
@@ -83,8 +86,8 @@ def main(args):
                 filename="{epoch}-{" + cfg.TRAINER.MONITOR_METRIC + ":.2f}",
                 monitor="epoch",
                 mode="max",
-                save_top_k=10,
-                every_n_epochs=5,
+                save_top_k=5,
+                every_n_epochs=10,
             ),
             LearningRateMonitor(logging_interval="epoch"),
             timer

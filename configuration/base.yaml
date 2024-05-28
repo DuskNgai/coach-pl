@@ -39,5 +39,5 @@ TRAINER:
 
   MONITOR_METRIC: null
 
-SEED: -1
+SEED: null
 OUTPUT_DIR: null

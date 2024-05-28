@@ -1,9 +1,9 @@
 name: coach-pl
 
 channels:
+  - conda-forge
   - pytorch
   - nvidia
-  - conda-forge
   - defaults
 
 dependencies:
@@ -12,6 +12,7 @@ dependencies:
   - torchvision
   - pytorch-cuda
   - lightning
+  - tensorboard
   - pip
     - fvcore
     - omegaconf
