@@ -1,1 +1,1 @@
-from .build import build_module
+from .build import MODULE_REGISTRY, build_module

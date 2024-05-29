@@ -11,33 +11,43 @@ DATASET:
 DATALOADER:
   NUM_WORKERS: 0
   PIN_MEMORY: False
+  DROP_LAST: False
+  PERSISTENT_WORKERS: False
 
 MODEL:
   NAME: null
   DEVICE: "cuda"
 
   CRITERION:
-    TYPE: null
     NAME: null
+    TYPE: null
 
 MODULE:
   NAME: null
 
 TRAINER:
-  BENCHMARK: False
-  DETERMINISTIC: False
+  MIXED_PRECISION: False
+  CHECKPOINT:
+    MONITOR: null
+    EVERY_N_EPOCHS: 10
+
+    BEST: False
+
+  MAX_EPOCHS: -1
+  CHECK_VAL_EVERY_N_EPOCHS: 1
+  LOG_EVERY_N_STEPS: 1
+  ACCUMULATE_GRAD_BATCHES: 1
 
   CLIP_GRAD:
     ENABLED: False
     ALGORITHM: null
     VALUE: 0.0
 
-  DETECT_ANOMALY: False
-  LOG_EVERY_N_STEPS: -1
-  MAX_EPOCHS: -1
-  MIXED_PRECISION: False
-
-  MONITOR_METRIC: null
+  DETERMINISTIC: False  # Set to True to enable cudnn.deterministic
+  BENCHMARK: False      # Set to True to enable cudnn.benchmark
+  PROFILE: null         # Set to `advanced` or `pytorch` to enable profiling
+  DETECT_ANOMALY: False # Set to True to enable anomaly detection
+  SYNC_BATCHNORM: False # Set to True to enable sync batchnorm
 
 SEED: null
 OUTPUT_DIR: null

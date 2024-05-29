@@ -1,11 +1,15 @@
+from fvcore.common.config import CfgNode
 import pytorch_lightning as pl
 from pytorch_lightning.trainer.states import RunningStage
 from torch.utils.data import DataLoader
 
-from configuration import CfgNode
-from dataset.build import build_dataset
+from .build import build_dataset
 
 class BaseDataModule(pl.LightningDataModule):
+    """
+    A general purpose data module.
+    """
+
     def __init__(self, cfg: CfgNode) -> None:
         super().__init__()
 
@@ -21,33 +25,39 @@ class BaseDataModule(pl.LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
-            self.train_dataset,
+            dataset=self.train_dataset,
             batch_size=self.cfg.DATASET.TRAIN.BATCH_SIZE,
             shuffle=True,
+            sampler=self.train_dataset.sampler,
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.train_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
+            drop_last=self.cfg.DATALOADER.DROP_LAST,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )
 
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
-            self.validation_dataset,
+            dataset=self.validation_dataset,
             batch_size=self.cfg.DATASET.VALIDATION.BATCH_SIZE,
             shuffle=False,
+            sampler=self.validation_dataset.sampler,
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.validation_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
+            drop_last=self.cfg.DATALOADER.DROP_LAST,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )
 
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
-            self.test_dataset,
+            dataset=self.test_dataset,
             batch_size=self.cfg.DATASET.TEST.BATCH_SIZE,
             shuffle=False,
+            sampler=self.test_dataset.sampler,
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.test_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
+            drop_last=self.cfg.DATALOADER.DROP_LAST,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )

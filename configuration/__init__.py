@@ -1,6 +1,3 @@
-from .config import configurable, CfgNode
+from .config import configurable
 
-__all__ = [
-    "configurable",
-    "CfgNode",
-]
+__all__ = ["configurable"]

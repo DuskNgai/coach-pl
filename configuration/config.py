@@ -15,7 +15,7 @@ def _called_with_cfg(*args, **kwargs) -> bool:
     Check if the function is called with a `CfgNode` as the first argument.
 
     Returns:
-        bool: whether the function is called with a `CfgNode` as the first argument.
+        (bool): whether the function is called with a `CfgNode` as the first argument.
             Or the `cfg` keyword argument is a `CfgNode`.
     """
 
@@ -31,11 +31,11 @@ def _get_args_from_cfg(from_config_func: Callable[[Any], dict[str, Any]], *args,
     Get the input arguments of the decorated function from a `CfgNode` object.
 
     Returns:
-        dict: The input arguments of the class `__init__` method.
+        (dict): The input arguments of the class `__init__` method.
     """
 
     signature = inspect.signature(from_config_func)
-    if next(signature.parameters.keys()) != "cfg":
+    if list(signature.parameters.keys())[0] != "cfg":
         raise ValueError("The first argument of `{}` must be named as `cfg`.".format(from_config_func.__name__))
 
     # Forwarding all arguments to `from_config`, if the arguments of `from_config` are only `*args` or `*kwargs`.

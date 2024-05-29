@@ -1,9 +1,7 @@
-import torch.utils.data
-
-from pytorch_lightning.trainer.states import RunningStage
-
-from configuration import CfgNode
+from fvcore.common.config import CfgNode
 from fvcore.common.registry import Registry
+from pytorch_lightning.trainer.states import RunningStage
+import torch.utils.data
 
 DATASET_REGISTRY = Registry("DATASET")
 DATASET_REGISTRY.__doc__ = "Registry for the dataset."
@@ -13,5 +11,9 @@ def build_dataset(cfg: CfgNode, stage: RunningStage) -> torch.utils.data.Dataset
     Build the dataset defined by `cfg.DATASET.NAME`.
     """
     dataset_name = cfg.DATASET.NAME
-    dataset = DATASET_REGISTRY.get(dataset_name)(cfg, stage)
+    try:
+        dataset = DATASET_REGISTRY.get(dataset_name)(cfg, stage)
+    except KeyError as e:
+        raise KeyError(DATASET_REGISTRY) from e
+
     return dataset
