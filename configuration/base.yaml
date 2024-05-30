@@ -1,5 +1,6 @@
 DATASET:
   NAME: null
+  ROOT:
 
 DATALOADER:
   BATCH_SIZE: 0
@@ -10,7 +11,7 @@ DATALOADER:
 
 MODEL:
   NAME: null
-  DEVICE: "cuda"
+  DEVICE: cuda
 
   CRITERION:
     NAME: null
@@ -28,12 +29,12 @@ MODULE:
 TRAINER:
   MIXED_PRECISION: False
   CHECKPOINT:
-    MONITOR: null
     EVERY_N_EPOCHS: 10
 
-    BEST: False
+    SAVE_BEST: False    # If True, monitor will be required
+    MONITOR: null
 
-  MAX_EPOCHS: -1
+  MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
   CHECK_VAL_EVERY_N_EPOCHS: 1
   LOG_EVERY_N_STEPS: 1
   ACCUMULATE_GRAD_BATCHES: 1
