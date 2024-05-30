@@ -8,8 +8,8 @@ If you find this package useful, please consider citing it:
 ```bibtex
 @misc{coach-pl,
   author = {Dusk Ngai},
-  title = {Coach-pl: A PyTorch-Lightning based deep learning framework},
-  year = {2022},
+  title = {Coach-pl: A PyTorch-Lightning Based Deep Learning Framework},
+  year = {2024},
   publisher = {GitHub},
   journal = {GitHub repository},
 }

@@ -9,10 +9,11 @@ channels:
 dependencies:
   - python=3.11
   - pytorch
-  - torchvision
   - pytorch-cuda
   - lightning
+  - scipy
   - tensorboard
+  - torchvision
   - pip
     - fvcore
     - omegaconf

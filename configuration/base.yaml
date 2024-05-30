@@ -1,14 +1,8 @@
 DATASET:
   NAME: null
 
-  TRAIN:
-    BATCH_SIZE: -1
-  VALIDATION:
-    BATCH_SIZE: -1
-  TEST:
-    BATCH_SIZE: -1
-
 DATALOADER:
+  BATCH_SIZE: 0
   NUM_WORKERS: 0
   PIN_MEMORY: False
   DROP_LAST: False
@@ -24,6 +18,12 @@ MODEL:
 
 MODULE:
   NAME: null
+
+  OPTIMIZER:
+    NAME: null
+
+  SCHEDULER:
+    NAME: null
 
 TRAINER:
   MIXED_PRECISION: False

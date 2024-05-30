@@ -58,5 +58,5 @@ def main():
     log_time_elasped(timer, RunningStage.TRAINING)
     log_time_elasped(timer, RunningStage.VALIDATING)
 
-    trainer.test(module, datamodule=datamodule, ckpt_path="best")
+    trainer.test(module, datamodule=datamodule, ckpt_path="last")
     log_time_elasped(timer, RunningStage.TESTING)
