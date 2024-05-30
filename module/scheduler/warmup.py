@@ -1,6 +1,8 @@
 from torch.optim.optimizer import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
+__all__ = ["LinearWarmupLR"]
+
 
 class LinearWarmupLR(LRScheduler):
     """

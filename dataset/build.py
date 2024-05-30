@@ -3,6 +3,9 @@ from fvcore.common.registry import Registry
 from pytorch_lightning.trainer.states import RunningStage
 import torch.utils.data
 
+__all__ = ["DATASET_REGISTRY", "build_dataset"]
+
+
 DATASET_REGISTRY = Registry("DATASET")
 DATASET_REGISTRY.__doc__ = "Registry for the dataset."
 

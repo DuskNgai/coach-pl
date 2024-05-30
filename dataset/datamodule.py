@@ -5,6 +5,9 @@ from torch.utils.data import DataLoader
 
 from .build import build_dataset
 
+__all__ = ["BaseDataModule"]
+
+
 class BaseDataModule(pl.LightningDataModule):
     """
     A general purpose data module.

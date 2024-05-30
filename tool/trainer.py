@@ -9,6 +9,13 @@ from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler
 from pytorch_lightning.trainer.states import RunningStage
 
+__all__ = [
+    "build_training_trainer",
+    "build_testing_trainer",
+    "setup_cfg",
+    "log_time_elasped"
+]
+
 
 def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
     """
@@ -33,7 +40,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
             every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
         ),
     ]
-    if cfg.TRAINER.CHECKPOINT.BEST:
+    if cfg.TRAINER.CHECKPOINT.SAVE_BEST:
         callbacks.append(ModelCheckpoint(
             dirpath=output_dir.joinpath("best_ckpts"),
             filename="ckpt-{epoch}-{" + cfg.TRAINER.CHECKPOINT.MONITOR+ ":.2f}",

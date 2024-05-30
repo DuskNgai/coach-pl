@@ -1,6 +1,9 @@
 DATASET:
   NAME: null
-  ROOT:
+  ROOT: null
+
+  TRANSFORM:
+    NAME: null
 
 DATALOADER:
   BATCH_SIZE: 0

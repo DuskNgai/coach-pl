@@ -3,6 +3,9 @@ import torch.nn as nn
 
 from .build import CRITERION_REGISTRY
 
+__all__ = ["build_pytorch_criterion"]
+
+
 @CRITERION_REGISTRY.register()
 def build_pytorch_criterion(cfg: CfgNode) -> nn.Module:
     """

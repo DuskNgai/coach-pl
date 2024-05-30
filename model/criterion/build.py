@@ -2,6 +2,9 @@ from fvcore.common.config import CfgNode
 from fvcore.common.registry import Registry
 import torch.nn
 
+__all__ = ["CRITERION_REGISTRY", "build_criterion"]
+
+
 CRITERION_REGISTRY = Registry("CRITERION")
 CRITERION_REGISTRY.__doc__ = "Registry for the model."
 

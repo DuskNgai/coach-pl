@@ -2,6 +2,9 @@ from fvcore.common.config import CfgNode
 from fvcore.common.registry import Registry
 import torch
 
+__all__ = ["MODEL_REGISTRY", "build_model"]
+
+
 MODEL_REGISTRY = Registry("MODEL")
 MODEL_REGISTRY.__doc__ = "Registry for the model."
 

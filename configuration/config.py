@@ -5,9 +5,7 @@ from typing import Any, Callable
 from fvcore.common.config import CfgNode
 from omegaconf import DictConfig
 
-__all__ = [
-    "configurable"
-]
+__all__ = ["configurable"]
 
 
 def _called_with_cfg(*args, **kwargs) -> bool:
@@ -86,7 +84,7 @@ def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dic
     a2 = A(cfg) # Call with a `CfgNode` object.
     a3 = A(cfg, x, y) # Call with a `CfgNode` object and regular arguments.
     ```
-    
+
     Args:
         `init_func` (callable): a function or a class method.
         `from_config` (callable): a function that converts a `CfgNode` to the
