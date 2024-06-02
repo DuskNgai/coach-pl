@@ -38,7 +38,6 @@ TRAINER:
     MONITOR: null
 
   MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
-  CHECK_VAL_EVERY_N_EPOCHS: 1
   LOG_EVERY_N_STEPS: 1
   ACCUMULATE_GRAD_BATCHES: 1
 

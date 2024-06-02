@@ -14,19 +14,19 @@ class LinearWarmupLR(LRScheduler):
     def __init__(self,
         optimizer: Optimizer,
         scheduler: LRScheduler,
-        warmup_epochs: int,
+        warmup_epochs_or_steps: int,
         warmup_factor: float,
         last_epoch: int = -1
-    ):
-        self.warmup_epochs = warmup_epochs
+    ) -> None:
+        self.warmup_epochs_or_steps = warmup_epochs_or_steps
         self.warmup_factor = warmup_factor
         self.scheduler = scheduler
 
         super().__init__(optimizer, last_epoch)
 
     def get_lr(self) -> list[float]:
-        if self.last_epoch <= self.warmup_epochs:
-            scale = self.warmup_factor + (1 - self.warmup_factor) * (self.last_epoch - 1) / (self.warmup_epochs - 1)
+        if self.last_epoch <= self.warmup_epochs_or_steps:
+            scale = self.warmup_factor + (1 - self.warmup_factor) * (self.last_epoch / self.warmup_epochs_or_steps)
             return [base_lr * scale for base_lr in self.base_lrs]
         else:
             return self.scheduler.get_last_lr()

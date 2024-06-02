@@ -6,7 +6,7 @@ from fvcore.common.config import CfgNode
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, ModelSummary, LearningRateMonitor, Timer
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
-from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler
+from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.trainer.states import RunningStage
 
 __all__ = [
@@ -30,31 +30,45 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
 
     timer = Timer()
     callbacks = [
-        LearningRateMonitor(logging_interval="epoch"),
-        ModelCheckpoint(
-            dirpath=output_dir.joinpath("regular_ckpts"),
-            filename="ckpt-{epoch}-{" + cfg.TRAINER.CHECKPOINT.MONITOR + ":.2f}" if cfg.TRAINER.CHECKPOINT.MONITOR is not None else "{epoch}",
-            monitor="epoch",
-            mode="max",
-            save_top_k=5,
-            every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
-        ),
+        timer,
+        LearningRateMonitor(logging_interval="step"),
     ]
+    if cfg.TRAINER.CHECKPOINT.MONITOR is not None:
+        assert str(cfg.TRAINER.CHECKPOINT.MONITOR).find('/') == -1, "Monitor should not contain `/`"
+        filename = "{epoch}-{" + cfg.TRAINER.CHECKPOINT.MONITOR + ":.2g}"
+    else:
+        filename = "{epoch}"
+    callbacks.append(ModelCheckpoint(
+        dirpath=output_dir.joinpath("regular_ckpts"),
+        filename=filename,
+        monitor="epoch",
+        save_last=True,
+        save_top_k=5,
+        mode="max",
+        every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
+    ))
+
     if cfg.TRAINER.CHECKPOINT.SAVE_BEST:
         callbacks.append(ModelCheckpoint(
             dirpath=output_dir.joinpath("best_ckpts"),
-            filename="ckpt-{epoch}-{" + cfg.TRAINER.CHECKPOINT.MONITOR+ ":.2f}",
+            filename=filename,
             monitor=cfg.TRAINER.CHECKPOINT.MONITOR,
-            mode="min" if "loss" in cfg.TRAINER.CHECKPOINT.MONITOR else "max",
-            save_top_k=3,
             save_last=True,
+            save_top_k=3,
+            mode="min" if "loss" in cfg.TRAINER.CHECKPOINT.MONITOR else "max",
             every_n_epochs=1,
         ))
     if cfg.TRAINER.PROFILER is not None:
         callbacks.append(ModelSummary(max_depth=-1))
 
-    profiler = None
-    if cfg.TRAINER.PROFILER == "advanced":
+    if cfg.TRAINER.PROFILER is None:
+        profiler = None
+    elif cfg.TRAINER.PROFILER == "simple":
+        profiler = SimpleProfiler(
+            dirpath=output_dir.joinpath("profiler"),
+            filename="performance_log"
+        )
+    elif cfg.TRAINER.PROFILER == "advanced":
         profiler = AdvancedProfiler(
             dirpath=output_dir.joinpath("profiler"),
             filename="performance_log"
@@ -67,8 +81,8 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
             filename="performance_log",
             emit_nvtx=True,
         )
-    elif cfg.TRAINER.PROFILER is not None:
-        raise ValueError(f"Unknown profiler: {cfg.TRAINER.PROFILER}")
+    else:
+        raise KeyError(f"Unknown profiler: {cfg.TRAINER.PROFILER}")
 
     trainer = pl.Trainer(
         accelerator="auto",
@@ -79,7 +93,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
         logger=logger,
         callbacks=callbacks,
         max_epochs=1 if cfg.TRAINER.PROFILER else cfg.TRAINER.MAX_EPOCHS,
-        check_val_every_n_epoch=cfg.TRAINER.CHECK_VAL_EVERY_N_EPOCHS,
+        check_val_every_n_epoch=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
         log_every_n_steps=cfg.TRAINER.LOG_EVERY_N_STEPS,
         accumulate_grad_batches=cfg.TRAINER.ACCUMULATE_GRAD_BATCHES,
         gradient_clip_val=cfg.TRAINER.CLIP_GRAD.VALUE if cfg.TRAINER.CLIP_GRAD.ENABLED else None,

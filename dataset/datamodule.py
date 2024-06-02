@@ -19,11 +19,11 @@ class BaseDataModule(pl.LightningDataModule):
         self.cfg = cfg
 
     def setup(self, stage: str | None = None) -> None:
-        if stage in (None, "fit"):
+        if stage == "fit":
             self.train_dataset = build_dataset(self.cfg, RunningStage.TRAINING)
             self.validation_dataset = build_dataset(self.cfg, RunningStage.VALIDATING)
 
-        if stage in (None, "test"):
+        if stage in ("test", "predict"):
             self.test_dataset = build_dataset(self.cfg, RunningStage.TESTING)
 
     def train_dataloader(self) -> DataLoader:
@@ -64,3 +64,6 @@ class BaseDataModule(pl.LightningDataModule):
             drop_last=self.cfg.DATALOADER.DROP_LAST,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )
+
+    def predict_dataloader(self) -> DataLoader:
+        return self.test_dataloader()
