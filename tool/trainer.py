@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fvcore.common.config import CfgNode
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint, ModelSummary, LearningRateMonitor, Timer
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.trainer.states import RunningStage
@@ -31,6 +31,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
     timer = Timer()
     callbacks = [
         timer,
+        TQDMProgressBar(refresh_rate=cfg.TRAINER.LOG_EVERY_N_STEPS),
         LearningRateMonitor(logging_interval="step"),
     ]
     if cfg.TRAINER.CHECKPOINT.MONITOR is not None:
