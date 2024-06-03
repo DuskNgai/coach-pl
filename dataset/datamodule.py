@@ -48,7 +48,7 @@ class BaseDataModule(pl.LightningDataModule):
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.validation_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
-            drop_last=self.cfg.DATALOADER.DROP_LAST,
+            drop_last=False,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )
 
@@ -61,7 +61,7 @@ class BaseDataModule(pl.LightningDataModule):
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.test_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
-            drop_last=self.cfg.DATALOADER.DROP_LAST,
+            drop_last=False,
             persistent_workers=self.cfg.DATALOADER.PERSISTENT_WORKERS,
         )
 

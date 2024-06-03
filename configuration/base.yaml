@@ -42,9 +42,8 @@ TRAINER:
   ACCUMULATE_GRAD_BATCHES: 1
 
   CLIP_GRAD:
-    ENABLED: False
     ALGORITHM: null
-    VALUE: 0.0
+    VALUE: null
 
   DETERMINISTIC: False  # Set to True to enable cudnn.deterministic
   BENCHMARK: False      # Set to True to enable cudnn.benchmark
