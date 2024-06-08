@@ -25,9 +25,11 @@ MODULE:
 
   OPTIMIZER:
     NAME: null
+    BASE_LR: 0
 
   SCHEDULER:
     NAME: null
+    STEP_ON_EPOCHS: False
 
 TRAINER:
   MIXED_PRECISION: False
