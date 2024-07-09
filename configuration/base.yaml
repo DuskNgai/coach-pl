@@ -49,7 +49,7 @@ TRAINER:
 
   DETERMINISTIC: False  # Set to True to enable cudnn.deterministic
   BENCHMARK: False      # Set to True to enable cudnn.benchmark
-  PROFILE: null         # Set to `advanced` or `pytorch` to enable profiling
+  PROFILER: null        # Set to `advanced` or `pytorch` to enable profiling
   DETECT_ANOMALY: False # Set to True to enable anomaly detection
   SYNC_BATCHNORM: False # Set to True to enable sync batchnorm
 
