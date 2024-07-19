@@ -7,7 +7,9 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
+from pytorch_lightning.strategies import StrategyRegistry
 from pytorch_lightning.trainer.states import RunningStage
+from pytorch_lightning.utilities.rank_zero import rank_zero_warn
 
 __all__ = [
     "build_training_trainer",
@@ -22,6 +24,16 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
     Build a PyTorch Lightning Trainer.
     """
     output_dir = Path(cfg.OUTPUT_DIR)
+
+    strategy = cfg.TRAINER.STRATEGY
+    if args.num_gpus * args.num_nodes == 1 and strategy != "auto":
+        rank_zero_warn("Single GPU training is not supported for the specified strategy. Automatically set to 'auto'.")
+        strategy = "auto"
+
+    if "deepspeed" in strategy:
+        StrategyRegistry[strategy]["init_params"].update(
+            {"logging_batch_size_per_gpu": cfg.DATALOADER.BATCH_SIZE}
+        )
 
     logger = [
         TensorBoardLogger(output_dir, "tb_log"),
@@ -86,7 +98,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
 
     trainer = pl.Trainer(
         accelerator="auto",
-        strategy="ddp" if args.num_gpus > 1 else "auto",
+        strategy=strategy,
         devices=args.num_gpus,
         num_nodes=args.num_nodes,
         precision="16-mixed" if cfg.TRAINER.MIXED_PRECISION else "32-true",

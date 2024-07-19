@@ -32,6 +32,7 @@ MODULE:
     STEP_ON_EPOCHS: False
 
 TRAINER:
+  STRATEGY: auto        # Set to `auto`, `ddp`, `ddp_spawn`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
   MIXED_PRECISION: False
   CHECKPOINT:
     EVERY_N_EPOCHS: 10
