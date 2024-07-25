@@ -41,7 +41,7 @@ def main(args: argparse.Namespace) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     print(cfg.dump())
 
-    trainer, timer = build_testing_trainer(args, cfg)
+    trainer, timer = build_testing_trainer(cfg)
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
 

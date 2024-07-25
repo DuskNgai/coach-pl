@@ -1,16 +1,16 @@
-DATASET:
-  NAME: null
-  ROOT: null
-
-  TRANSFORM:
-    NAME: null
-
 DATALOADER:
   BATCH_SIZE: 0
   NUM_WORKERS: 0
   PIN_MEMORY: False
   DROP_LAST: False
   PERSISTENT_WORKERS: False
+
+DATASET:
+  NAME: null
+  ROOT: null
+
+  TRANSFORM:
+    NAME: null
 
 MODEL:
   NAME: null

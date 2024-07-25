@@ -106,6 +106,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
         callbacks=callbacks,
         max_epochs=cfg.TRAINER.MAX_EPOCHS if cfg.TRAINER.PROFILER is None else 1,
         check_val_every_n_epoch=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
+        num_sanity_val_steps=None if cfg.TRAINER.PROFILER is None else 0,
         log_every_n_steps=cfg.TRAINER.LOG_EVERY_N_STEPS,
         accumulate_grad_batches=cfg.TRAINER.ACCUMULATE_GRAD_BATCHES,
         gradient_clip_val=cfg.TRAINER.CLIP_GRAD.VALUE,
@@ -121,7 +122,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
     return trainer, timer
 
 
-def build_testing_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
+def build_testing_trainer(cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
     """
     Build a PyTorch Lightning Trainer for testing.
     """
