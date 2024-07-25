@@ -19,6 +19,24 @@ To use this package, one should create at least:
 3. a pytorch-lightning style module.
 4. a yaml configuration file.
 
+For each dataset, model, and module class, one should make it
+1. registered in the corresponding registry.
+2. configurable with the `@configurable` decorator and `from_config` method.
+```python
+from coach_pl.configuration import configurable
+from coach_pl.models import MODEL_REGISTRY
+
+@MODEL_REGISTRY.register()
+class ExampleModel(nn.Module):
+    @configurable
+    def __init__(self, arg):
+        super().__init__()
+
+    @classmethod
+    def from_config(cls, cfg):
+        return {"arg": cfg.arg}
+```
+
 ## Citation
 
 If you find this package useful, please consider citing it:
