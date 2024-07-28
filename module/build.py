@@ -1,5 +1,5 @@
-from fvcore.common.config import CfgNode
 from fvcore.common.registry import Registry
+from omegaconf import DictConfig
 import pytorch_lightning as pl
 
 __all__ = ["MODULE_REGISTRY", "build_module"]
@@ -8,7 +8,7 @@ __all__ = ["MODULE_REGISTRY", "build_module"]
 MODULE_REGISTRY = Registry("MODULE")
 MODULE_REGISTRY.__doc__ = "Registry for the module, here it is refered to `pl.LightningModule`."
 
-def build_module(cfg: CfgNode) -> pl.LightningModule:
+def build_module(cfg: DictConfig) -> pl.LightningModule:
     """
     Build the module defined by `cfg.MODULE.NAME`.
     """

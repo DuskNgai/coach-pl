@@ -4,11 +4,12 @@ import sys
 
 sys.path.append(Path.cwd().as_posix())
 
-import pytorch_lightning as pl
+from pytorch_lightning import seed_everything
 from pytorch_lightning.trainer.states import RunningStage
 from rich import print
 import torch
 
+from coach_pl.configuration import CfgNode
 from coach_pl.dataset import BaseDataModule
 from coach_pl.module import build_module
 from coach_pl.tool.trainer import build_training_trainer, log_time_elasped, setup_cfg
@@ -34,20 +35,17 @@ def main(args: argparse.Namespace) -> None:
 
     cfg = setup_cfg(args)
 
-    print(collect_env_info())
-    pl.seed_everything(cfg.SEED)
+    seed_everything(cfg.SEED, workers=True)
     torch.set_float32_matmul_precision("high")
     torch.multiprocessing.set_sharing_strategy("file_system")
-
-    output_dir = Path(cfg.OUTPUT_DIR)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    with output_dir.joinpath("config.yaml").open("w") as f:
-        f.write(cfg.dump())
-    print(cfg.dump())
 
     trainer, timer = build_training_trainer(args, cfg)
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
+
+    if trainer.global_rank == 0:
+        print(collect_env_info())
+        print(CfgNode.to_yaml(cfg))
 
     if args.resume:
         trainer.fit(module, datamodule=datamodule, ckpt_path="last")

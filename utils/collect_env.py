@@ -11,7 +11,6 @@ import PIL
 import torch
 import torchvision
 
-
 __all__ = ["collect_env_info"]
 
 

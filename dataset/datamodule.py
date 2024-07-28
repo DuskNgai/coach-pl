@@ -1,4 +1,4 @@
-from fvcore.common.config import CfgNode
+from omegaconf import DictConfig
 import pytorch_lightning as pl
 from pytorch_lightning.trainer.states import RunningStage
 from torch.utils.data import DataLoader
@@ -13,7 +13,7 @@ class BaseDataModule(pl.LightningDataModule):
     A general purpose data module.
     """
 
-    def __init__(self, cfg: CfgNode) -> None:
+    def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
 
         self.cfg = cfg

@@ -1,139 +1,52 @@
-import functools
-import inspect
-from typing import Any, Callable
+import os.path
+from typing import Any
 
-from fvcore.common.config import CfgNode
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
-__all__ = ["configurable"]
+BASE_KEY = "_BASE_"
+ROOT_KEY = "cfg"
 
-
-def _called_with_cfg(*args, **kwargs) -> bool:
+class CfgNode(OmegaConf):
     """
-    Check if the function is called with a `CfgNode` as the first argument.
-
-    Returns:
-        (bool): whether the function is called with a `CfgNode` as the first argument.
-            Or the `cfg` keyword argument is a `CfgNode`.
+    A wrapper around OmegaConf that provides some additional functionality.
     """
 
-    if len(args) > 0 and isinstance(args[0], (CfgNode, DictConfig)):
-        return True
-    if isinstance(kwargs.get("cfg", None), (CfgNode, DictConfig)):
-        return True
-    return False
+    @staticmethod
+    def load_yaml_with_base(filename: str) -> DictConfig:
+        cfg = OmegaConf.load(filename)
 
+        def _load_with_base(base_cfg_file: str) -> dict[str, Any]:
+            if base_cfg_file.startswith("~"):
+                base_cfg_file = os.path.expanduser(base_cfg_file)
+            if not any(map(base_cfg_file.startswith, ["/", "https://", "http://"])):
+                # the path to base cfg is relative to the config file itself.
+                base_cfg_file = os.path.join(os.path.dirname(filename), base_cfg_file)
+            return CfgNode.load_yaml_with_base(base_cfg_file)
 
-def _get_args_from_cfg(from_config_func: Callable[[Any], dict[str, Any]], *args, **kwargs) -> dict[str, Any]:
-    """
-    Get the input arguments of the decorated function from a `CfgNode` object.
-
-    Returns:
-        (dict): The input arguments of the class `__init__` method.
-    """
-
-    signature = inspect.signature(from_config_func)
-    if list(signature.parameters.keys())[0] != "cfg":
-        raise ValueError("The first argument of `{}` must be named as `cfg`.".format(from_config_func.__name__))
-
-    # Forwarding all arguments to `from_config`, if the arguments of `from_config` are only `*args` or `*kwargs`.
-    if any(param.kind in [param.VAR_POSITIONAL or param.VAR_KEYWORD] for param in signature.parameters.values()):
-        result = from_config_func(*args, **kwargs)
-
-    # If there is any positional arguments.
-    else:
-        positional_args_name = set(signature.parameters.keys())
-        extra_kwargs = {}
-        for name in kwargs.keys():
-            if name not in positional_args_name:
-                extra_kwargs[name] = kwargs.pop(name)
-        result = from_config_func(*args, **kwargs)
-        # These args are forwarded directly to `__init__` method.
-        result.update(extra_kwargs)
-
-    return result
-
-
-def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dict[str, Any]] | None = None) -> Callable:
-    """
-    A decorator of a function or a class `__init__` method,
-    to make it configurable by a `CfgNode` object.
-
-    Example:
-    ```python
-    # 1. Decorate a function.
-    @configurable(from_config=lambda cfg: { "x": cfg.x })
-    def func(x, y=2, z=3):
-        pass
-
-    a1 = func(x=1, y=2) # Call with regular args.
-    a2 = func(cfg) # Call with a `CfgNode` object.
-    a3 = func(cfg, y=2, z=3) # Call with a `CfgNode` object and regular arguments.
-
-    # 2. Decorate a class `__init__` method.
-    class A:
-        @configurable
-        def __init__(self, *args, **kwargs) -> None:
-            pass
-
-        @classmethod
-        def from_config(cls, cfg) -> dict:
-            pass
-
-    a1 = A(x, y) # Call with regular constructor.
-    a2 = A(cfg) # Call with a `CfgNode` object.
-    a3 = A(cfg, x, y) # Call with a `CfgNode` object and regular arguments.
-    ```
-
-    Args:
-        `init_func` (callable): a function or a class method.
-        `from_config` (callable): a function that converts a `CfgNode` to the
-            input arguments of the decorated function.
-            It is always required.
-    """
-
-    # Decorating a function
-    if init_func is None:
-        # Prevent common misuse: `@configurable()`.
-        if from_config is None:
-            return configurable
-
-        assert inspect.isfunction(from_config), "`from_config` must be a function."
-
-        def wrapper(func):
-            @functools.wraps(func)
-            def wrapped(*args, **kwargs):
-                if _called_with_cfg(*args, **kwargs):
-                    explicit_args = _get_args_from_cfg(from_config, *args, **kwargs)
-                    return func(**explicit_args)
-                else:
-                    return func(*args, **kwargs)
-
-            wrapped.from_config = from_config
-            return wrapped
-
-        return wrapper
-
-    # Decorating a class `__init__` method
-    else:
-        assert(
-            inspect.isfunction(init_func) and from_config is None and init_func.__name__ == "__init__"
-        ), "Invalid usage of @configurable."
-
-        @functools.wraps(init_func)
-        def wrapped(self, *args, **kwargs):
-            try:
-                from_config_func = getattr(self, "from_config")
-            except AttributeError as e:
-                raise AttributeError("Class with `@configurable` should have a `from_config` classmethod.") from e
-
-            if not inspect.ismethod(from_config_func):
-                raise AttributeError("Class with `@configurable` should have a `from_config` classmethod.")
-
-            if _called_with_cfg(*args, **kwargs):
-                explicit_args = _get_args_from_cfg(from_config_func, *args, **kwargs)
-                init_func(self, **explicit_args)
+        if BASE_KEY in cfg:
+            if isinstance(cfg[BASE_KEY], list):
+                base_cfg: dict[str, Any] = {}
+                base_cfg_files = cfg[BASE_KEY]
+                for base_cfg_file in base_cfg_files:
+                    base_cfg = CfgNode.merge(base_cfg, _load_with_base(base_cfg_file))
             else:
-                init_func(self, *args, **kwargs)
+                base_cfg_file = cfg[BASE_KEY]
+                base_cfg = _load_with_base(base_cfg_file)
+            del cfg[BASE_KEY]
 
-        return wrapped
+            base_cfg = CfgNode.merge(base_cfg, cfg)
+            return base_cfg
+
+        if ROOT_KEY in cfg:
+            return cfg[ROOT_KEY]
+        return cfg
+
+    @staticmethod
+    def merge_with_dotlist(cfg: DictConfig, dotlist: list[str]) -> None:
+        if len(dotlist) == 0:
+            return
+
+        new_dotlist = []
+        for key, value in zip(dotlist[::2], dotlist[1::2]):
+            new_dotlist.append(f"{key}={value}")
+        cfg.merge_with_dotlist(new_dotlist)

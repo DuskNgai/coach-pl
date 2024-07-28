@@ -2,7 +2,7 @@ import argparse
 import datetime
 from pathlib import Path
 
-from fvcore.common.config import CfgNode
+from omegaconf import DictConfig
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
@@ -10,6 +10,8 @@ from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, Simpl
 from pytorch_lightning.strategies import StrategyRegistry
 from pytorch_lightning.trainer.states import RunningStage
 from pytorch_lightning.utilities.rank_zero import rank_zero_warn
+
+from coach_pl.configuration import CfgNode
 
 __all__ = [
     "build_training_trainer",
@@ -19,7 +21,7 @@ __all__ = [
 ]
 
 
-def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
+def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     """
     Build a PyTorch Lightning Trainer.
     """
@@ -122,7 +124,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: CfgNode) -> tuple[pl.T
     return trainer, timer
 
 
-def build_testing_trainer(cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
+def build_testing_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     """
     Build a PyTorch Lightning Trainer for testing.
     """
@@ -142,13 +144,13 @@ def build_testing_trainer(cfg: CfgNode) -> tuple[pl.Trainer, Timer]:
     return trainer, timer
 
 
-def setup_cfg(args: argparse.Namespace) -> CfgNode:
+def setup_cfg(args: argparse.Namespace) -> DictConfig:
     """
     Create configs from default settings, file, and command-line arguments.
     """
-    cfg = CfgNode(CfgNode.load_yaml_with_base(args.config_file))
-    cfg.merge_from_list(args.opts)
-    cfg.freeze()
+    cfg = CfgNode.load_yaml_with_base(args.config_file)
+    CfgNode.merge_with_dotlist(cfg, args.opts)
+    CfgNode.set_readonly(cfg, True)
     return cfg
 
 

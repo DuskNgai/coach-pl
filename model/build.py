@@ -1,5 +1,5 @@
-from fvcore.common.config import CfgNode
 from fvcore.common.registry import Registry
+from omegaconf import DictConfig
 import torch
 
 __all__ = ["MODEL_REGISTRY", "build_model"]
@@ -8,7 +8,7 @@ __all__ = ["MODEL_REGISTRY", "build_model"]
 MODEL_REGISTRY = Registry("MODEL")
 MODEL_REGISTRY.__doc__ = "Registry for the model."
 
-def build_model(cfg: CfgNode) -> torch.nn.Module:
+def build_model(cfg: DictConfig) -> torch.nn.Module:
     """
     Build the model defined by `cfg.MODEL.NAME`.
     It moves the model to the device defined by `cfg.MODEL.DEVICE`.

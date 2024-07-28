@@ -1,4 +1,4 @@
-from fvcore.common.config import CfgNode
+from omegaconf import DictConfig
 import torch.nn as nn
 
 from .build import CRITERION_REGISTRY
@@ -7,7 +7,7 @@ __all__ = ["build_pytorch_criterion"]
 
 
 @CRITERION_REGISTRY.register()
-def build_pytorch_criterion(cfg: CfgNode) -> nn.Module:
+def build_pytorch_criterion(cfg: DictConfig) -> nn.Module:
     """
     Build the builtin criterion defined by `cfg.MODEL.CRITERION.TYPE`.
     """
