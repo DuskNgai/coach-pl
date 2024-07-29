@@ -6,14 +6,11 @@ sys.path.append(Path.cwd().as_posix())
 
 from pytorch_lightning import seed_everything
 from pytorch_lightning.trainer.states import RunningStage
-from rich import print
 import torch
 
-from coach_pl.configuration import CfgNode
 from coach_pl.dataset import BaseDataModule
 from coach_pl.module import build_module
-from coach_pl.tool.trainer import build_testing_trainer, log_time_elasped, setup_cfg
-from coach_pl.utils.collect_env import collect_env_info
+from coach_pl.tool.trainer import build_testing_trainer, log_configurations, log_time_elasped, setup_cfg
 
 
 def arg_parser() -> argparse.ArgumentParser:
@@ -32,6 +29,7 @@ def main(args: argparse.Namespace) -> None:
     """
 
     cfg = setup_cfg(args)
+    log_configurations(cfg)
 
     seed_everything(cfg.SEED, workers=True)
     torch.set_float32_matmul_precision("high")
@@ -40,10 +38,6 @@ def main(args: argparse.Namespace) -> None:
     trainer, timer = build_testing_trainer(cfg)
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
-
-    if trainer.global_rank == 0:
-        print(collect_env_info())
-        print(CfgNode.to_yaml(cfg))
 
     trainer.test(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
     log_time_elasped(timer, RunningStage.TESTING)
