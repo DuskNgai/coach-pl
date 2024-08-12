@@ -42,7 +42,10 @@ def load_pretrained(model: torch.nn.Module, ckpt_path: Path) -> torch.nn.Module:
     """
     Load the pre-trained model from the checkpoint file.
     """
-    ckpt = torch.load(ckpt_path)
+    if torch.cuda.is_available():
+        ckpt = torch.load(ckpt_path, map_location="cuda")
+    else:
+        ckpt = torch.load(ckpt_path, map_location="cpu")
 
     if "state_dict" in ckpt:
         checkpoint_state_dict = ckpt["state_dict"]
