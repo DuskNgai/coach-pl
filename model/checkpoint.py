@@ -54,8 +54,9 @@ def load_pretrained(model: torch.nn.Module, ckpt_path: Path) -> torch.nn.Module:
     else:
         checkpoint_state_dict = ckpt
 
-    _strip_prefix_if_present(checkpoint_state_dict, "module.") # for DistributedDataParallel
-    _strip_prefix_if_present(checkpoint_state_dict, "model.")  # for PyTorch Lightning Module
+    _strip_prefix_if_present(checkpoint_state_dict, "module.")    # for DistributedDataParallel
+    _strip_prefix_if_present(checkpoint_state_dict, "model.")     # for PyTorch Lightning Module
+    _strip_prefix_if_present(checkpoint_state_dict, "_orig_mod.") # for torch.compile
 
     msg = model.load_state_dict(checkpoint_state_dict, strict=False)
     print(f"Loaded pre-trained model from {ckpt_path} with message: {msg}")
