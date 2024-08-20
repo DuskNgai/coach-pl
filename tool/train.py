@@ -17,7 +17,7 @@ def arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="A general purpose training script for PyTorch Lightning based projects.")
 
     parser.add_argument("--config-file", type=Path, metavar="FILE", required=True)
-    parser.add_argument("--resume", action="store_true", help="Whether to attempt to resume from the checkpoint directory.")
+    parser.add_argument("--resume", type=Path, default=None, metavar="FILE", help="The path to the checkpoint to resume from.")
     parser.add_argument("--num-gpus", type=int, default=1, help="Number of GPUs per node for distributed training.")
     parser.add_argument("--num-nodes", type=int, default=1, help="Number of nodes for distributed training.")
     parser.add_argument("opts", nargs=argparse.REMAINDER, default=None, help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.")
@@ -41,10 +41,7 @@ def main(args: argparse.Namespace) -> None:
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
 
-    if args.resume:
-        trainer.fit(module, datamodule=datamodule, ckpt_path="last")
-    else:
-        trainer.fit(module, datamodule=datamodule)
+    trainer.fit(module, datamodule=datamodule, ckpt_path=args.resume)
     log_time_elasped(timer, RunningStage.TRAINING)
     log_time_elasped(timer, RunningStage.VALIDATING)
 
