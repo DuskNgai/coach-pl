@@ -1,0 +1,21 @@
+from fvcore.common.registry import Registry
+from omegaconf import DictConfig
+import torch.nn
+
+__all__ = ["METRIC_REGISTRY", "build_metric"]
+
+
+METRIC_REGISTRY = Registry("METRIC")
+METRIC_REGISTRY.__doc__ = "Registry for the model."
+
+def build_metric(cfg: DictConfig) -> torch.nn.Module:
+    """
+    Build the metric defined by `cfg.MODEL.METRIC.NAME`.
+    """
+    metric_name = cfg.MODEL.METRIC.NAME
+    try:
+        metric = METRIC_REGISTRY.get(metric_name)(cfg)
+    except KeyError as e:
+        raise KeyError(METRIC_REGISTRY) from e
+
+    return metric
