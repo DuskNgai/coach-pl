@@ -1,9 +1,18 @@
 # Coach-pl
 
-Coach-pl is a PyTorch-Lightning based deep learning framework for training and evaluating models.
+Coach-pl is a [PyTorch-Lightning](https://lightning.ai/docs/pytorch/stable/) based deep learning framework for training and evaluating models.
 It is designed to be flexible, allowing for quick prototyping and experimentation.
 
 If you have any questions or suggestions, please feel free to contact me through github issues.
+
+## Requirements
+
+These are the dependencies for the package:
+
+```bash
+conda install lightning rich
+pip install deepspeed fvcore omegaconf
+```
 
 ## Usage
 
@@ -22,7 +31,9 @@ To use this package, one should create at least:
 For each dataset, model, and module class, one should make it
 1. registered in the corresponding registry.
 2. configurable with the `@configurable` decorator and `from_config` method.
+3. import it in the `__init__.py` file in the corresponding parent directory.
 ```python
+# In `model/example.py`
 from coach_pl.configuration import configurable
 from coach_pl.models import MODEL_REGISTRY
 
@@ -35,6 +46,9 @@ class ExampleModel(nn.Module):
     @classmethod
     def from_config(cls, cfg):
         return {"arg": cfg.arg}
+
+# In `model/__init__.py`
+from .example import ExampleModel
 ```
 
 ## Citation
@@ -50,5 +64,3 @@ If you find this package useful, please consider citing it:
   journal = {GitHub repository},
 }
 ```
-
-Note that the license of this project is **GPL-2.0**.

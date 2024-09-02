@@ -7,7 +7,6 @@ DATALOADER:
 
 DATASET:
   NAME: null
-  ROOT: null
 
   TRANSFORM:
     NAME: null
@@ -30,11 +29,9 @@ MODULE:
 
   OPTIMIZER:
     NAME: null
-    BASE_LR: 0
 
   SCHEDULER:
     NAME: null
-    STEP_ON_EPOCHS: False
 
 TRAINER:
   STRATEGY: auto        # Set to `auto`, `ddp`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
