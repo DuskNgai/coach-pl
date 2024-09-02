@@ -20,6 +20,10 @@ MODEL:
     NAME: null
     TYPE: null
 
+  METRIC:
+    NAME: null
+    TYPE: null
+
 MODULE:
   NAME: null
   COMPILE: False
