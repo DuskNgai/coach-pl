@@ -6,7 +6,7 @@ __all__ = ["METRIC_REGISTRY", "build_metric"]
 
 
 METRIC_REGISTRY = Registry("METRIC")
-METRIC_REGISTRY.__doc__ = "Registry for the model."
+METRIC_REGISTRY.__doc__ = "Registry for the metric."
 
 def build_metric(cfg: DictConfig) -> torch.nn.Module:
     """
