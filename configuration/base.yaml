@@ -41,6 +41,7 @@ TRAINER:
 
     SAVE_BEST: False    # If True, monitor will be required
     MONITOR: null
+    MONITOR_MODE: min   # Set to `min` or `max`
 
   MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
   LOG_EVERY_N_STEPS: 1

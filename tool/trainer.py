@@ -54,6 +54,17 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         filename = "{epoch}-{" + cfg.TRAINER.CHECKPOINT.MONITOR + ":.4g}"
     else:
         filename = "{epoch}"
+
+    if cfg.TRAINER.CHECKPOINT.SAVE_BEST:
+        callbacks.append(ModelCheckpoint(
+            dirpath=output_dir.joinpath("best_ckpts"),
+            filename=filename,
+            monitor=cfg.TRAINER.CHECKPOINT.MONITOR,
+            save_last="link",
+            save_top_k=3,
+            mode=cfg.TRAINER.CHECKPOINT.MONITOR_MODE,
+            every_n_epochs=1,
+        ))
     callbacks.append(ModelCheckpoint(
         dirpath=output_dir.joinpath("regular_ckpts"),
         filename=filename,
@@ -64,16 +75,6 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
     ))
 
-    if cfg.TRAINER.CHECKPOINT.SAVE_BEST:
-        callbacks.append(ModelCheckpoint(
-            dirpath=output_dir.joinpath("best_ckpts"),
-            filename=filename,
-            monitor=cfg.TRAINER.CHECKPOINT.MONITOR,
-            save_last="link",
-            save_top_k=3,
-            mode="min" if "loss" in cfg.TRAINER.CHECKPOINT.MONITOR else "max",
-            every_n_epochs=1,
-        ))
     if cfg.TRAINER.PROFILER is not None:
         callbacks.append(ModelSummary(max_depth=-1))
 
