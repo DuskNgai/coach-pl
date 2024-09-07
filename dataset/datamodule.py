@@ -30,7 +30,7 @@ class BaseDataModule(pl.LightningDataModule):
         return DataLoader(
             dataset=self.train_dataset,
             batch_size=self.cfg.DATALOADER.BATCH_SIZE,
-            shuffle=True,
+            shuffle=True if self.train_dataset.sampler is None else False,
             sampler=self.train_dataset.sampler,
             num_workers=self.cfg.DATALOADER.NUM_WORKERS,
             collate_fn=self.train_dataset.collate_fn,

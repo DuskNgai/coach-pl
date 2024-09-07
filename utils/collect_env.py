@@ -119,13 +119,6 @@ def collect_env_info() -> list[tuple[str, str]]:
     except (ImportError, AttributeError):
         pass
 
-    try:
-        import iopath
-
-        data.append(("iopath", iopath.__version__))
-    except (ImportError, AttributeError):
-        pass
-
     env_str = tabulate.tabulate(data) + "\n"
     env_str += collect_torch_env()
     return env_str
