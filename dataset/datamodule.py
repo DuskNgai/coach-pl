@@ -29,10 +29,10 @@ class BaseDataModule(pl.LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.train_dataset,
-            batch_size=self.cfg.DATALOADER.BATCH_SIZE,
+            batch_size=self.cfg.DATALOADER.TRAIN.BATCH_SIZE,
             shuffle=True if self.train_dataset.sampler is None else False,
             sampler=self.train_dataset.sampler,
-            num_workers=self.cfg.DATALOADER.NUM_WORKERS,
+            num_workers=self.cfg.DATALOADER.TRAIN.NUM_WORKERS,
             collate_fn=self.train_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
             drop_last=self.cfg.DATALOADER.DROP_LAST,
@@ -42,10 +42,10 @@ class BaseDataModule(pl.LightningDataModule):
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.validation_dataset,
-            batch_size=self.cfg.DATALOADER.BATCH_SIZE,
+            batch_size=self.cfg.DATALOADER.VAL.BATCH_SIZE if self.cfg.DATALOADER.VAL.BATCH_SIZE > 0 else self.cfg.DATALOADER.TRAIN.BATCH_SIZE,
             shuffle=False,
             sampler=self.validation_dataset.sampler,
-            num_workers=self.cfg.DATALOADER.NUM_WORKERS,
+            num_workers=self.cfg.DATALOADER.VAL.NUM_WORKERS if self.cfg.DATALOADER.VAL.NUM_WORKERS > 0 else self.cfg.DATALOADER.TRAIN.NUM_WORKERS,
             collate_fn=self.validation_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
             drop_last=False,
@@ -55,10 +55,10 @@ class BaseDataModule(pl.LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.test_dataset,
-            batch_size=self.cfg.DATALOADER.BATCH_SIZE,
+            batch_size=self.cfg.DATALOADER.TEST.BATCH_SIZE if self.cfg.DATALOADER.TEST.BATCH_SIZE > 0 else self.cfg.DATALOADER.TRAIN.BATCH_SIZE,
             shuffle=False,
             sampler=self.test_dataset.sampler,
-            num_workers=self.cfg.DATALOADER.NUM_WORKERS,
+            num_workers=self.cfg.DATALOADER.TEST.NUM_WORKERS if self.cfg.DATALOADER.TEST.NUM_WORKERS > 0 else self.cfg.DATALOADER.TRAIN.NUM_WORKERS,
             collate_fn=self.test_dataset.collate_fn,
             pin_memory=self.cfg.DATALOADER.PIN_MEMORY,
             drop_last=False,

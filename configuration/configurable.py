@@ -45,7 +45,7 @@ def _get_args_from_cfg(from_config_func: Callable[[Any], dict[str, Any]], *args,
         extra_kwargs = {}
         for name in kwargs.keys():
             if name not in positional_args_name:
-                extra_kwargs[name] = kwargs.pop(name)
+                extra_kwargs[name] = kwargs[name]
         result = from_config_func(*args, **kwargs)
         # These args are forwarded directly to `__init__` method.
         result.update(extra_kwargs)
