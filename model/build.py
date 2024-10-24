@@ -20,5 +20,4 @@ def build_model(cfg: DictConfig) -> torch.nn.Module:
     except KeyError as e:
         raise KeyError(MODEL_REGISTRY) from e
 
-    model.to(torch.device(cfg.MODEL.DEVICE))
     return model

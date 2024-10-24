@@ -23,7 +23,6 @@ DATASET:
 
 MODEL:
   NAME: null
-  DEVICE: cuda
 
   CRITERION:
     NAME: null
