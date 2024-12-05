@@ -14,15 +14,29 @@ from coach_pl.tool.trainer import build_testing_trainer, log_configurations, log
 
 
 def arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="A general purpose testing script for PyTorch Lightning based projects.")
+    parser = argparse.ArgumentParser(
+        description="A general purpose testing script for PyTorch Lightning based projects."
+    )
 
-    parser.add_argument("--config-file", type=Path, metavar="FILE", required=True)
-    parser.add_argument("--ckpt-path", type=Path, metavar="FILE", required=True, help="Path to the checkpoint file.")
+    parser.add_argument(
+        "--config-file",
+        type=Path,
+        metavar="FILE",
+        required=True,
+    )
+    parser.add_argument(
+        "--ckpt-path",
+        type=Path,
+        metavar="FILE",
+        required=True,
+        help="Path to the checkpoint file.",
+    )
     parser.add_argument(
         "opts",
         nargs=argparse.REMAINDER,
         default=None,
-        help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.",
+        help=
+        "Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.",
     )
 
     return parser

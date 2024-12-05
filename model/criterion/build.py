@@ -2,7 +2,10 @@ from fvcore.common.registry import Registry
 from omegaconf import DictConfig
 import torch.nn
 
-__all__ = ["CRITERION_REGISTRY", "build_criterion"]
+__all__ = [
+    "CRITERION_REGISTRY",
+    "build_criterion",
+]
 
 CRITERION_REGISTRY = Registry("CRITERION")
 CRITERION_REGISTRY.__doc__ = "Registry for the model."

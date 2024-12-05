@@ -2,7 +2,10 @@ from fvcore.common.registry import Registry
 from omegaconf import DictConfig
 import pytorch_lightning as pl
 
-__all__ = ["MODULE_REGISTRY", "build_module"]
+__all__ = [
+    "MODULE_REGISTRY",
+    "build_module",
+]
 
 MODULE_REGISTRY = Registry("MODULE")
 MODULE_REGISTRY.__doc__ = "Registry for the module, here it is refered to `pl.LightningModule`."

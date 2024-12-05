@@ -2,7 +2,10 @@ from fvcore.common.registry import Registry
 from omegaconf import DictConfig
 import torch.nn
 
-__all__ = ["METRIC_REGISTRY", "build_metric"]
+__all__ = [
+    "METRIC_REGISTRY",
+    "build_metric",
+]
 
 METRIC_REGISTRY = Registry("METRIC")
 METRIC_REGISTRY.__doc__ = "Registry for the metric."

@@ -14,7 +14,12 @@ from pytorch_lightning.utilities.rank_zero import rank_zero_only, rank_zero_warn
 from coach_pl.configuration import CfgNode
 from coach_pl.utils.collect_env import collect_env_info
 
-__all__ = ["build_training_trainer", "build_testing_trainer", "setup_cfg", "log_time_elasped"]
+__all__ = [
+    "build_training_trainer",
+    "build_testing_trainer",
+    "setup_cfg",
+    "log_time_elasped",
+]
 
 
 def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
