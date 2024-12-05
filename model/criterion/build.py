@@ -4,9 +4,9 @@ import torch.nn
 
 __all__ = ["CRITERION_REGISTRY", "build_criterion"]
 
-
 CRITERION_REGISTRY = Registry("CRITERION")
 CRITERION_REGISTRY.__doc__ = "Registry for the model."
+
 
 def build_criterion(cfg: DictConfig) -> torch.nn.Module:
     """

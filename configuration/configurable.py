@@ -61,13 +61,15 @@ def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dic
     Example:
     ```python
     # 1. Decorate a function.
-    @configurable(from_config=lambda cfg: { "x": cfg.x })
+    @configurable(from_config=lambda cfg: {"x": cfg.x})
     def func(x, y=2, z=3):
         pass
 
-    a1 = func(x=1, y=2) # Call with regular args.
-    a2 = func(cfg) # Call with a `DictConfig` object.
-    a3 = func(cfg, y=2, z=3) # Call with a `DictConfig` object and regular arguments.
+
+    a1 = func(x=1, y=2)  # Call with regular args.
+    a2 = func(cfg)  # Call with a `DictConfig` object.
+    a3 = func(cfg, y=2, z=3)  # Call with a `DictConfig` object and regular arguments.
+
 
     # 2. Decorate a class `__init__` method.
     class A:
@@ -79,9 +81,10 @@ def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dic
         def from_config(cls, cfg) -> dict:
             pass
 
-    a1 = A(x, y) # Call with regular constructor.
-    a2 = A(cfg) # Call with a `DictConfig` object.
-    a3 = A(cfg, x, y) # Call with a `DictConfig` object and regular arguments.
+
+    a1 = A(x, y)  # Call with regular constructor.
+    a2 = A(cfg)  # Call with a `DictConfig` object.
+    a3 = A(cfg, x, y)  # Call with a `DictConfig` object and regular arguments.
     ```
 
     Args:
@@ -100,6 +103,7 @@ def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dic
         assert inspect.isfunction(from_config), "`from_config` must be a function."
 
         def wrapper(func):
+
             @functools.wraps(func)
             def wrapped(*args, **kwargs):
                 if _called_with_cfg(*args, **kwargs):
@@ -115,7 +119,7 @@ def configurable(init_func: Callable = None, *, from_config: Callable[[Any], dic
 
     # Decorating a class `__init__` method
     else:
-        assert(
+        assert (
             inspect.isfunction(init_func) and from_config is None and init_func.__name__ == "__init__"
         ), "Invalid usage of @configurable."
 

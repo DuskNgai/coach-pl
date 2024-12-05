@@ -40,16 +40,18 @@ from coach_pl.models import MODEL_REGISTRY
 @MODEL_REGISTRY.register()
 class ExampleModel(nn.Module):
     @configurable
-    def __init__(self, arg):
+    def __init__(self, arg) -> None:
         super().__init__()
 
     @classmethod
-    def from_config(cls, cfg):
+    def from_config(cls, cfg) -> dict[str, Any]:
         return {"arg": cfg.arg}
 
 # In `model/__init__.py`
 from .example import ExampleModel
 ```
+
+We also provide a `yapf` configuration file `.style.yapf` for code formatting.
 
 ## Citation
 

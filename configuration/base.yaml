@@ -8,12 +8,12 @@ DATALOADER:
     NUM_WORKERS: 0
 
   VAL:
-    BATCH_SIZE: 0
-    NUM_WORKERS: 0
+    BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
+    NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
 
   TEST:
-    BATCH_SIZE: 0
-    NUM_WORKERS: 0
+    BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
+    NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
 
 DATASET:
   NAME: null
@@ -43,14 +43,14 @@ MODULE:
     NAME: null
 
 TRAINER:
-  STRATEGY: auto        # Set to `auto`, `ddp`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
-  MIXED_PRECISION: False
+  STRATEGY: auto        # Options: `auto`, `ddp`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
+  PRECISION: 32-true    # Options: `16-true`, `16-mixed`, `bf16-true`, `bf16-mixed`, `32-true`, `64-true`
   CHECKPOINT:
     EVERY_N_EPOCHS: 10
 
     SAVE_BEST: False    # If True, monitor will be required
     MONITOR: null
-    MONITOR_MODE: min   # Set to `min` or `max`
+    MONITOR_MODE: min   # Options: `min` or `max`
 
   MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
   LOG_EVERY_N_STEPS: 1

@@ -4,9 +4,9 @@ import torch
 
 __all__ = ["MODEL_REGISTRY", "build_model"]
 
-
 MODEL_REGISTRY = Registry("MODEL")
 MODEL_REGISTRY.__doc__ = "Registry for the model."
+
 
 def build_model(cfg: DictConfig) -> torch.nn.Module:
     """

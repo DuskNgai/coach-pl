@@ -5,9 +5,9 @@ import torch.utils.data
 
 __all__ = ["TRANSFORM_REGISTRY", "build_transform"]
 
-
 TRANSFORM_REGISTRY = Registry("TRANSFORM")
 TRANSFORM_REGISTRY.__doc__ = "Registry for the transform."
+
 
 def build_transform(cfg: DictConfig, stage: RunningStage) -> torch.utils.data.Dataset:
     """

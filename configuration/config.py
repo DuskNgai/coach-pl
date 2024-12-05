@@ -6,6 +6,7 @@ from omegaconf import DictConfig, OmegaConf
 BASE_KEY = "_BASE_"
 ROOT_KEY = "cfg"
 
+
 class CfgNode(OmegaConf):
     """
     A wrapper around OmegaConf that provides some additional functionality.
@@ -47,6 +48,6 @@ class CfgNode(OmegaConf):
             return
 
         new_dotlist = []
-        for key, value in zip(dotlist[::2], dotlist[1::2]):
+        for key, value in zip(dotlist[:: 2], dotlist[1 :: 2]):
             new_dotlist.append(f"{key}={value}")
         cfg.merge_with_dotlist(new_dotlist)

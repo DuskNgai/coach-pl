@@ -31,7 +31,8 @@ def detect_compute_compatibility(CUDA_HOME: str | None, so_file: str | None) -> 
         cuobjdump = os.path.join(CUDA_HOME, "bin", "cuobjdump")
         if os.path.isfile(cuobjdump):
             output = subprocess.check_output(
-                "'{}' --list-elf '{}'".format(cuobjdump, so_file), shell=True
+                args="'{}' --list-elf '{}'".format(cuobjdump, so_file),
+                shell=True,
             ).decode("utf-8").strip().split("\n")
             arch = []
             for line in output:

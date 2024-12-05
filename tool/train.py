@@ -20,7 +20,12 @@ def arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--resume", type=Path, default=None, metavar="FILE", help="The path to the checkpoint to resume from.")
     parser.add_argument("--num-gpus", type=int, default=1, help="Number of GPUs per node for distributed training.")
     parser.add_argument("--num-nodes", type=int, default=1, help="Number of nodes for distributed training.")
-    parser.add_argument("opts", nargs=argparse.REMAINDER, default=None, help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.")
+    parser.add_argument(
+        "opts",
+        nargs=argparse.REMAINDER,
+        default=None,
+        help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.",
+    )
 
     return parser
 

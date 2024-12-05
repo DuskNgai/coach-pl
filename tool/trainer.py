@@ -4,7 +4,7 @@ from pathlib import Path
 
 from omegaconf import DictConfig
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, RichModelSummary, Timer, TQDMProgressBar
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.strategies import StrategyRegistry
@@ -14,12 +14,7 @@ from pytorch_lightning.utilities.rank_zero import rank_zero_only, rank_zero_warn
 from coach_pl.configuration import CfgNode
 from coach_pl.utils.collect_env import collect_env_info
 
-__all__ = [
-    "build_training_trainer",
-    "build_testing_trainer",
-    "setup_cfg",
-    "log_time_elasped"
-]
+__all__ = ["build_training_trainer", "build_testing_trainer", "setup_cfg", "log_time_elasped"]
 
 
 def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
@@ -34,13 +29,13 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         strategy = "auto"
 
     if "deepspeed" in strategy:
-        StrategyRegistry[strategy]["init_params"].update(
-            {"logging_batch_size_per_gpu": cfg.DATALOADER.BATCH_SIZE}
-        )
+        StrategyRegistry[strategy]["init_params"].update({
+            "logging_batch_size_per_gpu": cfg.DATALOADER.BATCH_SIZE
+        })
 
     logger = [
-        TensorBoardLogger(output_dir, "tb_log"),
-        CSVLogger(output_dir, "csv_log"),
+        CSVLogger(save_dir=output_dir, name="csv_log"),
+        TensorBoardLogger(save_dir=output_dir, name="tb_log"),
     ]
 
     timer = Timer()
@@ -48,6 +43,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         timer,
         TQDMProgressBar(refresh_rate=cfg.TRAINER.LOG_EVERY_N_STEPS),
         LearningRateMonitor(logging_interval="step"),
+        RichModelSummary(max_depth=2),
     ]
     if cfg.TRAINER.CHECKPOINT.MONITOR is not None:
         assert str(cfg.TRAINER.CHECKPOINT.MONITOR).find('/') == -1, "Monitor should not contain `/`"
@@ -56,43 +52,38 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         filename = "{epoch}"
 
     if cfg.TRAINER.CHECKPOINT.SAVE_BEST:
-        callbacks.append(ModelCheckpoint(
-            dirpath=output_dir.joinpath("best_ckpts"),
+        callbacks.append(
+            ModelCheckpoint(
+                dirpath=output_dir.joinpath("best_ckpts"),
+                filename=filename,
+                monitor=cfg.TRAINER.CHECKPOINT.MONITOR,
+                save_last="link",
+                save_top_k=3,
+                mode=cfg.TRAINER.CHECKPOINT.MONITOR_MODE,
+                every_n_epochs=1,
+            )
+        )
+    callbacks.append(
+        ModelCheckpoint(
+            dirpath=output_dir.joinpath("regular_ckpts"),
             filename=filename,
-            monitor=cfg.TRAINER.CHECKPOINT.MONITOR,
+            monitor="epoch",
             save_last="link",
-            save_top_k=3,
-            mode=cfg.TRAINER.CHECKPOINT.MONITOR_MODE,
-            every_n_epochs=1,
-        ))
-    callbacks.append(ModelCheckpoint(
-        dirpath=output_dir.joinpath("regular_ckpts"),
-        filename=filename,
-        monitor="epoch",
-        save_last="link",
-        save_top_k=5,
-        mode="max",
-        every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
-    ))
-
-    if cfg.TRAINER.PROFILER is not None:
-        callbacks.append(ModelSummary(max_depth=-1))
+            save_top_k=5,
+            mode="max",
+            every_n_epochs=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
+        )
+    )
 
     if cfg.TRAINER.PROFILER is None:
         profiler = None
     elif cfg.TRAINER.PROFILER == "simple":
-        profiler = SimpleProfiler(
-            dirpath=output_dir.joinpath("profiler"),
-            filename="performance_log"
-        )
+        profiler = SimpleProfiler(dirpath=output_dir.joinpath("profiler"), filename="performance_log")
     elif cfg.TRAINER.PROFILER == "advanced":
-        profiler = AdvancedProfiler(
-            dirpath=output_dir.joinpath("profiler"),
-            filename="performance_log"
-        )
+        profiler = AdvancedProfiler(dirpath=output_dir.joinpath("profiler"), filename="performance_log")
     elif cfg.TRAINER.PROFILER == "pytorch":
         # To visualize the profiled operations,
-        # run `nvprof --profile-from-start off -o <path_to_performance_log>` 
+        # run `nvprof --profile-from-start off -o <path_to_performance_log>`
         profiler = PyTorchProfiler(
             dirpath=output_dir.joinpath("profiler"),
             filename="performance_log",
@@ -106,7 +97,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         strategy=strategy,
         devices=args.num_gpus,
         num_nodes=args.num_nodes,
-        precision="16-mixed" if cfg.TRAINER.MIXED_PRECISION else "32-true",
+        precision=cfg.TRAINER.PRECISION,
         logger=logger,
         callbacks=callbacks,
         max_epochs=cfg.TRAINER.MAX_EPOCHS if cfg.TRAINER.PROFILER is None else 1,
@@ -136,7 +127,7 @@ def build_testing_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     timer = Timer()
 
     trainer = pl.Trainer(
-        precision="16-mixed" if cfg.TRAINER.MIXED_PRECISION else "32-true",
+        precision=cfg.TRAINER.PRECISION,
         logger=[TensorBoardLogger(output_dir, "tb_log")],
         callbacks=[timer],
         deterministic=cfg.TRAINER.DETERMINISTIC,
