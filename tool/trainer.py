@@ -4,7 +4,7 @@ from pathlib import Path
 
 from omegaconf import DictConfig
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, RichModelSummary, Timer, TQDMProgressBar
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.strategies import StrategyRegistry
@@ -48,7 +48,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         timer,
         TQDMProgressBar(refresh_rate=cfg.TRAINER.LOG_EVERY_N_STEPS),
         LearningRateMonitor(logging_interval="step"),
-        RichModelSummary(max_depth=2),
+        ModelSummary(max_depth=2),
     ]
     if cfg.TRAINER.CHECKPOINT.MONITOR is not None:
         assert str(cfg.TRAINER.CHECKPOINT.MONITOR).find('/') == -1, "Monitor should not contain `/`"
@@ -107,7 +107,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         callbacks=callbacks,
         max_epochs=cfg.TRAINER.MAX_EPOCHS if cfg.TRAINER.PROFILER is None else 1,
         check_val_every_n_epoch=cfg.TRAINER.CHECKPOINT.EVERY_N_EPOCHS,
-        num_sanity_val_steps=None if cfg.TRAINER.PROFILER is None else 0,
+        num_sanity_val_steps=cfg.TRAINER.NUM_SANITY_VAL_STEPS if cfg.TRAINER.PROFILER is None else 0,
         log_every_n_steps=cfg.TRAINER.LOG_EVERY_N_STEPS,
         accumulate_grad_batches=cfg.TRAINER.ACCUMULATE_GRAD_BATCHES,
         gradient_clip_val=cfg.TRAINER.CLIP_GRAD.VALUE,

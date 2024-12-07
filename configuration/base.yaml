@@ -53,6 +53,7 @@ TRAINER:
     MONITOR_MODE: min   # Options: `min` or `max`
 
   MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
+  NUM_SANITY_VAL_STEPS: 0
   LOG_EVERY_N_STEPS: 1
   ACCUMULATE_GRAD_BATCHES: 1
 

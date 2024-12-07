@@ -1,7 +1,9 @@
+from functools import reduce
 from pathlib import Path
 from typing import Any
 
 from pytorch_lightning.utilities.rank_zero import rank_zero_warn
+from timm.layers import resample_abs_pos_embed
 import torch
 
 
@@ -47,27 +49,52 @@ def load_pretrained(model: torch.nn.Module, ckpt_path: Path) -> torch.nn.Module:
     ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
 
     if "state_dict" in ckpt:
-        checkpoint_state_dict = ckpt["state_dict"]
+        ckpt_state_dict = ckpt["state_dict"]
     elif "model" in ckpt:
-        checkpoint_state_dict = ckpt["model"]
+        ckpt_state_dict = ckpt["model"]
     else:
-        checkpoint_state_dict = ckpt
+        ckpt_state_dict = ckpt
     model_state_dict = model.state_dict()
 
-    _strip_prefix_if_present(checkpoint_state_dict, "module.")    # for DistributedDataParallel
-    _strip_prefix_if_present(checkpoint_state_dict, "model.")     # for PyTorch Lightning Module
-    _strip_prefix_if_present(checkpoint_state_dict, "_orig_mod.") # for torch.compile
+    _strip_prefix_if_present(ckpt_state_dict, "module.")    # for DistributedDataParallel
+    _strip_prefix_if_present(ckpt_state_dict, "model.")     # for PyTorch Lightning Module
+    _strip_prefix_if_present(ckpt_state_dict, "_orig_mod.") # for torch.compile
 
-    for k in list(checkpoint_state_dict.keys()):
-        if k in model_state_dict:
-            model_param = model_state_dict[k]
+    for name, ckpt_param in ckpt_state_dict.items():
+        # Extra parameters in the checkpoint that are not in the model
+        model_param = model_state_dict.get(name)
+        if model_param is None:
+            continue
 
-            shape_model = tuple(model_param.shape)
-            shape_checkpoint = tuple(checkpoint_state_dict[k].shape)
-            if shape_model != shape_checkpoint:
-                checkpoint_state_dict.pop(k)
+        shape_ckpt_param = tuple(ckpt_param.shape)
+        shape_model_param = tuple(model_param.shape)
 
-    msg = model.load_state_dict(checkpoint_state_dict, strict=False)
+        # Parameters that fit exactly
+        if shape_model_param == shape_ckpt_param:
+            continue
+
+        # Parameters that need to be reshaped
+        if "pos_embed" in name:
+            num_embed_dim = shape_ckpt_param[-1]
+            num_model_patches = model.patch_embed.num_patches
+            num_ckpt_patches = reduce(lambda x, y: x * y, shape_ckpt_param[1 :-1])
+            num_prefix_tokens = 1 if "cls_token" in ckpt_state_dict else 0
+
+            if num_model_patches + num_prefix_tokens == num_ckpt_patches:
+                new_pos_embed = ckpt_param.reshape(-1, num_ckpt_patches, num_embed_dim)
+                new_pos_embed = new_pos_embed[:, num_prefix_tokens :, :].view(shape_model_param)
+            else:
+                new_pos_embed = resample_abs_pos_embed(
+                    ckpt_param.reshape(-1, num_ckpt_patches, num_embed_dim)[:, num_prefix_tokens :, :],
+                    new_size=model.patch_embed.grid_size,
+                    num_prefix_tokens=0,
+                ).view(shape_model_param)
+
+            ckpt_state_dict[name] = new_pos_embed
+        else:
+            ckpt_state_dict.pop(name)
+
+    msg = model.load_state_dict(ckpt_state_dict, strict=False)
     rank_zero_warn(f"Loaded pre-trained model from {ckpt_path} with message: {msg}")
 
     return model
