@@ -1,7 +1,7 @@
 from fvcore.common.registry import Registry
 from omegaconf import DictConfig
 from pytorch_lightning.trainer.states import RunningStage
-import torch.utils.data
+from torchvision.transforms import v2
 
 __all__ = [
     "TRANSFORM_REGISTRY",
@@ -9,10 +9,10 @@ __all__ = [
 ]
 
 TRANSFORM_REGISTRY = Registry("TRANSFORM")
-TRANSFORM_REGISTRY.__doc__ = "Registry for the transform."
+TRANSFORM_REGISTRY.__doc__ = "Registry for the data transform."
 
 
-def build_transform(cfg: DictConfig, stage: RunningStage) -> torch.utils.data.Dataset:
+def build_transform(cfg: DictConfig, stage: RunningStage) -> v2.Compose:
     """
     Build the dataset defined by `cfg.DATASET.TRANSFORM.NAME`.
     """

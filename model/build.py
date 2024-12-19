@@ -14,7 +14,6 @@ MODEL_REGISTRY.__doc__ = "Registry for the model."
 def build_model(cfg: DictConfig) -> torch.nn.Module:
     """
     Build the model defined by `cfg.MODEL.NAME`.
-    It moves the model to the device defined by `cfg.MODEL.DEVICE`.
     It does not load checkpoints from `cfg`.
     """
     model_name = cfg.MODEL.NAME

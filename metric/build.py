@@ -13,9 +13,9 @@ METRIC_REGISTRY.__doc__ = "Registry for the metric."
 
 def build_metric(cfg: DictConfig) -> torch.nn.Module:
     """
-    Build the metric defined by `cfg.MODEL.METRIC.NAME`.
+    Build the metric defined by `cfg.METRIC.NAME`.
     """
-    metric_name = cfg.MODEL.METRIC.NAME
+    metric_name = cfg.METRIC.NAME
     try:
         metric = METRIC_REGISTRY.get(metric_name)(cfg)
     except KeyError as e:

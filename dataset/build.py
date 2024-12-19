@@ -1,7 +1,7 @@
 from fvcore.common.registry import Registry
 from omegaconf import DictConfig
 from pytorch_lightning.trainer.states import RunningStage
-import torch.utils.data
+from torch.utils.data import Dataset
 
 __all__ = [
     "DATASET_REGISTRY",
@@ -12,7 +12,7 @@ DATASET_REGISTRY = Registry("DATASET")
 DATASET_REGISTRY.__doc__ = "Registry for the dataset."
 
 
-def build_dataset(cfg: DictConfig, stage: RunningStage) -> torch.utils.data.Dataset:
+def build_dataset(cfg: DictConfig, stage: RunningStage) -> Dataset:
     """
     Build the dataset defined by `cfg.DATASET.NAME`.
     """

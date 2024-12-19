@@ -10,7 +10,12 @@ import torch
 
 from coach_pl.dataset import BaseDataModule
 from coach_pl.module import build_module
-from coach_pl.tool.trainer import build_training_trainer, log_configurations, log_time_elasped, setup_cfg
+from .trainer import (
+    build_training_trainer,
+    log_configurations,
+    log_time_elasped,
+    setup_cfg,
+)
 
 
 def arg_parser() -> argparse.ArgumentParser:

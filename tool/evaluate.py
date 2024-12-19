@@ -10,7 +10,12 @@ import torch
 
 from coach_pl.dataset import BaseDataModule
 from coach_pl.module import build_module
-from coach_pl.tool.trainer import build_testing_trainer, log_configurations, log_time_elasped, setup_cfg
+from .trainer import (
+    build_evaluating_trainer,
+    log_configurations,
+    log_time_elasped,
+    setup_cfg,
+)
 
 
 def arg_parser() -> argparse.ArgumentParser:
@@ -44,7 +49,7 @@ def arg_parser() -> argparse.ArgumentParser:
 
 def main(args: argparse.Namespace) -> None:
     """
-    A general purpose testing script.
+    A general purpose evaluation script.
     """
 
     cfg = setup_cfg(args)
@@ -54,7 +59,7 @@ def main(args: argparse.Namespace) -> None:
     torch.set_float32_matmul_precision("high")
     torch.multiprocessing.set_sharing_strategy("file_system")
 
-    trainer, timer = build_testing_trainer(cfg)
+    trainer, timer = build_evaluating_trainer(cfg)
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
 

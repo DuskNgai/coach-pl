@@ -10,7 +10,7 @@ __all__ = ["BaseDataModule"]
 
 class BaseDataModule(pl.LightningDataModule):
     """
-    A general purpose data module.
+    A general purpose datamodule.
     """
 
     def __init__(self, cfg: DictConfig) -> None:

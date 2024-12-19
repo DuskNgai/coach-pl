@@ -8,14 +8,14 @@ __all__ = [
 ]
 
 CRITERION_REGISTRY = Registry("CRITERION")
-CRITERION_REGISTRY.__doc__ = "Registry for the model."
+CRITERION_REGISTRY.__doc__ = "Registry for the criterion."
 
 
 def build_criterion(cfg: DictConfig) -> torch.nn.Module:
     """
-    Build the criterion defined by `cfg.MODEL.CRITERION.NAME`.
+    Build the criterion defined by `cfg.CRITERION.NAME`.
     """
-    criterion_name = cfg.MODEL.CRITERION.NAME
+    criterion_name = cfg.CRITERION.NAME
     try:
         criterion = CRITERION_REGISTRY.get(criterion_name)(cfg)
     except KeyError as e:

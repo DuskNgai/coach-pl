@@ -4,7 +4,13 @@ from pathlib import Path
 
 from omegaconf import DictConfig
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint, ModelSummary, Timer, TQDMProgressBar
+from pytorch_lightning.callbacks import (
+    LearningRateMonitor,
+    ModelCheckpoint,
+    ModelSummary,
+    Timer,
+    TQDMProgressBar,
+)
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.strategies import StrategyRegistry
@@ -16,7 +22,7 @@ from coach_pl.utils.collect_env import collect_env_info
 
 __all__ = [
     "build_training_trainer",
-    "build_testing_trainer",
+    "build_evaluating_trainer",
     "setup_cfg",
     "log_time_elasped",
 ]
@@ -123,9 +129,9 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
     return trainer, timer
 
 
-def build_testing_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
+def build_evaluating_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     """
-    Build a PyTorch Lightning Trainer for testing.
+    Build a PyTorch Lightning Trainer for evaluation.
     """
     output_dir = Path(cfg.OUTPUT_DIR)
 

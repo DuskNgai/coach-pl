@@ -1,3 +1,7 @@
+CRITERION:
+  NAME: null
+  TYPE: null
+
 DATALOADER:
   PIN_MEMORY: False
   DROP_LAST: False
@@ -21,16 +25,12 @@ DATASET:
   TRANSFORM:
     NAME: null
 
+METRIC:
+  NAME: null
+  TYPE: null
+
 MODEL:
   NAME: null
-
-  CRITERION:
-    NAME: null
-    TYPE: null
-
-  METRIC:
-    NAME: null
-    TYPE: null
 
 MODULE:
   NAME: null

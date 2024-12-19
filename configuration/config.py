@@ -9,7 +9,7 @@ ROOT_KEY = "cfg"
 
 class CfgNode(OmegaConf):
     """
-    A wrapper around OmegaConf that provides some additional functionality.
+    A wrapper around OmegaConf that provides some customized functionality.
     """
 
     @staticmethod
