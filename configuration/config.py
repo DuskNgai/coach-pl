@@ -4,7 +4,6 @@ from typing import Any
 from omegaconf import DictConfig, OmegaConf
 
 BASE_KEY = "_BASE_"
-ROOT_KEY = "cfg"
 
 
 class CfgNode(OmegaConf):
@@ -38,8 +37,6 @@ class CfgNode(OmegaConf):
             base_cfg = CfgNode.merge(base_cfg, cfg)
             return base_cfg
 
-        if ROOT_KEY in cfg:
-            return cfg[ROOT_KEY]
         return cfg
 
     @staticmethod
