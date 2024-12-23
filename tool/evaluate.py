@@ -57,7 +57,6 @@ def main(args: argparse.Namespace) -> None:
 
     seed_everything(cfg.SEED, workers=True)
     torch.set_float32_matmul_precision("high")
-    torch.multiprocessing.set_sharing_strategy("file_system")
 
     trainer, timer = build_evaluating_trainer(cfg)
     module = build_module(cfg)
