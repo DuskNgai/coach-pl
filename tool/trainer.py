@@ -41,7 +41,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
 
     if "deepspeed" in strategy:
         StrategyRegistry[strategy]["init_params"].update({
-            "logging_batch_size_per_gpu": cfg.DATALOADER.BATCH_SIZE
+            "logging_batch_size_per_gpu": cfg.DATALOADER.TRAIN.BATCH_SIZE
         })
 
     logger = [
