@@ -1,4 +1,12 @@
+import logging
 from typing import Any, OrderedDict
+
+from rich.logging import RichHandler
+import torch
+import torch.nn as nn
+
+logging.basicConfig(level="INFO", format="%(message)s", handlers=[RichHandler()])
+logger = logging.getLogger(__name__)
 
 
 def strip_prefix_if_present(state_dict: OrderedDict[str, Any], prefix: str) -> None:
@@ -33,3 +41,23 @@ def strip_prefix_if_present(state_dict: OrderedDict[str, Any], prefix: str) -> N
                 continue
             newkey = key[len(prefix):]
             metadata[newkey] = metadata.pop(key)
+
+
+def load_pretrained(model: nn.Module, checkpoint_path: str, prefix: str = "") -> None:
+    """
+    Default load_pretrained function.
+    """
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
+
+    if "state_dict" in ckpt:
+        ckpt_state_dict = ckpt["state_dict"]
+    elif "model" in ckpt:
+        ckpt_state_dict = ckpt["model"]
+    else:
+        ckpt_state_dict = ckpt
+    strip_prefix_if_present(ckpt_state_dict, prefix)
+
+    msg = model.load_state_dict(ckpt_state_dict, strict=False)
+    logger.info(f"Loaded pre-trained model from {checkpoint_path} with message: {msg}")
