@@ -1,12 +1,9 @@
-import logging
 from typing import Any, OrderedDict
 
-from rich.logging import RichHandler
 import torch
 import torch.nn as nn
 
-logging.basicConfig(level="INFO", format="%(message)s", handlers=[RichHandler()])
-logger = logging.getLogger(__name__)
+from .logging import setup_logger
 
 
 def strip_prefix_if_present(state_dict: OrderedDict[str, Any], prefix: str) -> None:
@@ -47,7 +44,7 @@ def load_pretrained(model: nn.Module, checkpoint_path: str, prefix: str = "") ->
     """
     Default load_pretrained function.
     """
-
+    logger = setup_logger(__name__, rank_zero_only=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
@@ -58,6 +55,19 @@ def load_pretrained(model: nn.Module, checkpoint_path: str, prefix: str = "") ->
     else:
         ckpt_state_dict = ckpt
     strip_prefix_if_present(ckpt_state_dict, prefix)
+
+    model_state_dict = model.state_dict()
+    for name in list(ckpt_state_dict.keys()):
+        if name not in model_state_dict:
+            continue
+
+        model_param = model_state_dict[name]
+        ckpt_param = ckpt_state_dict[name]
+
+        shape_model = tuple(model_param.shape)
+        shape_ckpt = tuple(ckpt_param.shape)
+        if shape_model != shape_ckpt:
+            ckpt_state_dict.pop(name)
 
     msg = model.load_state_dict(ckpt_state_dict, strict=False)
     logger.info(f"Loaded pre-trained model from {checkpoint_path} with message: {msg}")

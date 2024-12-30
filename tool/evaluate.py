@@ -10,6 +10,7 @@ import torch
 
 from coach_pl.dataset import BaseDataModule
 from coach_pl.module import build_module
+
 from .trainer import (
     build_evaluating_trainer,
     log_configurations,

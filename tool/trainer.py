@@ -15,10 +15,11 @@ from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
 from pytorch_lightning.strategies import StrategyRegistry
 from pytorch_lightning.trainer.states import RunningStage
-from pytorch_lightning.utilities.rank_zero import rank_zero_only, rank_zero_warn
+from pytorch_lightning.utilities.rank_zero import rank_zero_warn
 
 from coach_pl.configuration import CfgNode
 from coach_pl.utils.collect_env import collect_env_info
+from coach_pl.utils.logging import setup_logger
 
 __all__ = [
     "build_training_trainer",
@@ -159,13 +160,13 @@ def setup_cfg(args: argparse.Namespace) -> DictConfig:
     return cfg
 
 
-@rank_zero_only
 def log_configurations(cfg: DictConfig) -> None:
-    print(collect_env_info())
-    print(CfgNode.to_yaml(cfg))
+    logger = setup_logger("coach_pl", rank_zero_only=True)
+    logger.info(collect_env_info())
+    logger.info(CfgNode.to_yaml(cfg))
 
 
-@rank_zero_only
 def log_time_elasped(timer: Timer, stage: RunningStage) -> None:
+    logger = setup_logger("coach_pl", rank_zero_only=True)
     elasped_time = datetime.timedelta(seconds=timer.time_elapsed(stage))
-    print(f"Running time for {stage}: {elasped_time}")
+    logger.info(f"Running time for {stage}: {elasped_time}")
