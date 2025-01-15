@@ -48,10 +48,10 @@ def load_pretrained(model: nn.Module, checkpoint_path: str, prefix: str = "") ->
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
-    if "state_dict" in ckpt:
-        ckpt_state_dict = ckpt["state_dict"]
-    elif "model" in ckpt:
+    if "model" in ckpt:
         ckpt_state_dict = ckpt["model"]
+    elif "state_dict" in ckpt:
+        ckpt_state_dict = ckpt["state_dict"]
     else:
         ckpt_state_dict = ckpt
     strip_prefix_if_present(ckpt_state_dict, prefix)
