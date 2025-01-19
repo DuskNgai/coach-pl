@@ -25,9 +25,8 @@ DATASET:
   TRANSFORM:
     NAME: null
 
-METRIC:
+EVALUATOR:
   NAME: null
-  TYPE: null
 
 MODEL:
   NAME: null
