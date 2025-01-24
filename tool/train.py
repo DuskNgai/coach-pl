@@ -68,10 +68,11 @@ def main(args: argparse.Namespace) -> None:
     cfg = setup_cfg(args)
     log_configurations(cfg)
 
-    seed_everything(cfg.SEED, workers=True)
     torch.set_float32_matmul_precision("high")
 
     trainer, timer = build_training_trainer(args, cfg)
+    seed_everything(cfg.SEED + trainer.global_rank, workers=True)
+
     module = build_module(cfg)
     datamodule = BaseDataModule(cfg)
 

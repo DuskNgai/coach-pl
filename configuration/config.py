@@ -1,5 +1,5 @@
 import os.path
-from typing import Any
+from typing import Any, Sequence
 
 from omegaconf import DictConfig, OmegaConf
 
@@ -24,7 +24,7 @@ class CfgNode(OmegaConf):
             return CfgNode.load_yaml_with_base(base_cfg_file)
 
         if BASE_KEY in cfg:
-            if isinstance(cfg[BASE_KEY], list):
+            if isinstance(cfg[BASE_KEY], Sequence):
                 base_cfg: dict[str, Any] = {}
                 base_cfg_files = cfg[BASE_KEY]
                 for base_cfg_file in base_cfg_files:
@@ -40,7 +40,7 @@ class CfgNode(OmegaConf):
         return cfg
 
     @staticmethod
-    def merge_with_dotlist(cfg: DictConfig, dotlist: list[str]) -> None:
+    def merge_with_dotlist(cfg: DictConfig, dotlist: Sequence[str]) -> None:
         if len(dotlist) == 0:
             return
 

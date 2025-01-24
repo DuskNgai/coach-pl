@@ -102,7 +102,7 @@ logging.basicConfig(
 
 def setup_logger(name: str, rank_zero_only: bool = True) -> logging.Logger:
     logger = logging.getLogger(name)
-    logging.StreamHandler
+
     if rank_zero_only:
         logger.debug = rzo(logger.debug)
         logger.info = rzo(logger.info)
