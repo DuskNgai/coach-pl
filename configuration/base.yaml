@@ -10,6 +10,7 @@ DATALOADER:
   TRAIN:
     BATCH_SIZE: 0
     NUM_WORKERS: 0
+    SHUFFLE: True  # Only TRAIN has this option
 
   VAL:
     BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE

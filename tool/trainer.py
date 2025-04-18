@@ -45,9 +45,10 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
             "logging_batch_size_per_gpu": cfg.DATALOADER.TRAIN.BATCH_SIZE
         })
 
+    # Order matters!
     logger = [
-        CSVLogger(save_dir=output_dir, name="csv_log"),
         TensorBoardLogger(save_dir=output_dir, name="tb_log"),
+        CSVLogger(save_dir=output_dir, name="csv_log"),
     ]
 
     timer = Timer()
