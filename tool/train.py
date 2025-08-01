@@ -8,7 +8,7 @@ from pytorch_lightning import seed_everything
 from pytorch_lightning.trainer.states import RunningStage
 import torch
 
-from coach_pl.dataset import BaseDataModule
+from coach_pl.datamodule import BaseDataModule
 from coach_pl.module import build_module
 
 from .trainer import (
@@ -20,9 +20,7 @@ from .trainer import (
 
 
 def arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="A general purpose training script for PyTorch Lightning based projects."
-    )
+    parser = argparse.ArgumentParser(description="A general purpose training script for PyTorch Lightning based projects.")
 
     parser.add_argument(
         "--config-file",
@@ -53,8 +51,7 @@ def arg_parser() -> argparse.ArgumentParser:
         "opts",
         nargs=argparse.REMAINDER,
         default=None,
-        help=
-        "Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.",
+        help="Modify config options at the end of the command. For Yacs configs, use space-separated `PATH.KEY VALUE` pairs.",
     )
 
     return parser

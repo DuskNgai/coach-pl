@@ -14,9 +14,9 @@ DATASET_REGISTRY.__doc__ = "Registry for the dataset."
 
 def build_dataset(cfg: DictConfig, stage: RunningStage) -> Dataset:
     """
-    Build the dataset defined by `cfg.DATASET.NAME`.
+    Build the dataset defined by `cfg.DATAMODULE.DATASET.NAME`.
     """
-    dataset_name = cfg.DATASET.NAME
+    dataset_name = getattr(cfg, "NAME", cfg.DATAMODULE.DATASET.NAME)
     try:
         dataset = DATASET_REGISTRY.get(dataset_name)(cfg, stage)
     except KeyError as e:

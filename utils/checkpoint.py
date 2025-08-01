@@ -1,4 +1,7 @@
-from typing import Any, OrderedDict
+from typing import (
+    Any,
+    OrderedDict,
+)
 
 import torch
 import torch.nn as nn

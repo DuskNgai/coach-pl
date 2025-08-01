@@ -1,7 +1,10 @@
 import os.path
 from typing import Any, Sequence
 
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import (
+    DictConfig,
+    OmegaConf,
+)
 
 BASE_KEY = "_BASE_"
 

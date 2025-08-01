@@ -11,8 +11,15 @@ from pytorch_lightning.callbacks import (
     Timer,
     TQDMProgressBar,
 )
-from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
-from pytorch_lightning.profilers import AdvancedProfiler, PyTorchProfiler, SimpleProfiler
+from pytorch_lightning.loggers import (
+    CSVLogger,
+    TensorBoardLogger,
+)
+from pytorch_lightning.profilers import (
+    AdvancedProfiler,
+    PyTorchProfiler,
+    SimpleProfiler,
+)
 from pytorch_lightning.strategies import StrategyRegistry
 from pytorch_lightning.trainer.states import RunningStage
 from pytorch_lightning.utilities.rank_zero import rank_zero_warn
@@ -42,7 +49,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
 
     if "deepspeed" in strategy:
         StrategyRegistry[strategy]["init_params"].update({
-            "logging_batch_size_per_gpu": cfg.DATALOADER.TRAIN.BATCH_SIZE
+            "logging_batch_size_per_gpu": cfg.DATAMODULE.DATALOADER.TRAIN.BATCH_SIZE
         })
 
     # Order matters!
@@ -122,6 +129,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
         gradient_clip_algorithm=cfg.TRAINER.CLIP_GRAD.ALGORITHM,
         deterministic=cfg.TRAINER.DETERMINISTIC,
         benchmark=cfg.TRAINER.BENCHMARK,
+        use_distributed_sampler=cfg.TRAINER.USE_DISTRIBUTED_SAMPLER,
         profiler=profiler,
         detect_anomaly=cfg.TRAINER.DETECT_ANOMALY,
         sync_batchnorm=cfg.TRAINER.SYNC_BATCHNORM,

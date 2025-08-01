@@ -13,7 +13,7 @@ blank_line_before_nested_class_or_def=True
 blank_lines_between_top_level_imports_and_variables=1
 
 coalesce_brackets=True
-column_limit=120
+column_limit=140
 continuation_align_style=SPACE
 continuation_indent_width=4
 

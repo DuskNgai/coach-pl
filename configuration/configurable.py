@@ -1,6 +1,9 @@
 import functools
 import inspect
-from typing import Any, Callable
+from typing import (
+    Any,
+    Callable,
+)
 
 from omegaconf import DictConfig
 
@@ -53,9 +56,7 @@ def _get_args_from_cfg(from_config_func: Callable[[Any], dict[str, Any]], *args,
     return result
 
 
-def configurable(
-    init_func: Callable | None = None, *, from_config: Callable[[Any], dict[str, Any]] | None = None
-) -> Callable:
+def configurable(init_func: Callable | None = None, *, from_config: Callable[[Any], dict[str, Any]] | None = None) -> Callable:
     """
     A decorator of a function or a class `__init__` method,
     to make it configurable by a `DictConfig` object.

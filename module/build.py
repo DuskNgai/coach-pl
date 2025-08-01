@@ -15,7 +15,7 @@ def build_module(cfg: DictConfig) -> pl.LightningModule:
     """
     Build the module defined by `cfg.MODULE.NAME`.
     """
-    module_name = cfg.MODULE.NAME
+    module_name = getattr(cfg, "NAME", cfg.MODULE.NAME)
     try:
         module = MODULE_REGISTRY.get(module_name)(cfg)
     except KeyError as e:

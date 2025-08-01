@@ -14,9 +14,9 @@ TRANSFORM_REGISTRY.__doc__ = "Registry for the data transform."
 
 def build_transform(cfg: DictConfig, stage: RunningStage) -> v2.Compose:
     """
-    Build the dataset defined by `cfg.DATASET.TRANSFORM.NAME`.
+    Build the dataset defined by `cfg.DATAMODULE.DATASET.TRANSFORM.NAME`.
     """
-    transform_name = cfg.DATASET.TRANSFORM.NAME
+    transform_name = getattr(cfg, "NAME", cfg.DATAMODULE.DATASET.TRANSFORM.NAME)
     try:
         transform = TRANSFORM_REGISTRY.get(transform_name)(cfg, stage)
     except KeyError as e:

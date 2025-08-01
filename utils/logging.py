@@ -3,11 +3,22 @@ import logging
 from typing import Iterable
 
 from pytorch_lightning.utilities import rank_zero_only as rzo
-from rich.console import Console, ConsoleRenderable, RenderableType
+from rich.console import (
+    Console,
+    ConsoleRenderable,
+    RenderableType,
+)
 from rich.containers import Renderables
-from rich.logging import LogRender, RichHandler, FormatTimeCallable
+from rich.logging import (
+    FormatTimeCallable,
+    LogRender,
+    RichHandler,
+)
 from rich.table import Table
-from rich.text import Text, TextType
+from rich.text import (
+    Text,
+    TextType,
+)
 
 __all__ = ["setup_logger"]
 

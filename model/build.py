@@ -16,7 +16,7 @@ def build_model(cfg: DictConfig) -> torch.nn.Module:
     Build the model defined by `cfg.MODEL.NAME`.
     It does not load checkpoints from `cfg`.
     """
-    model_name = cfg.MODEL.NAME
+    model_name = getattr(cfg, "NAME", cfg.MODEL.NAME)
     try:
         model = MODEL_REGISTRY.get(model_name)(cfg)
     except KeyError as e:

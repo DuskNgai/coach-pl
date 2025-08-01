@@ -2,28 +2,32 @@ CRITERION:
   NAME: null
   TYPE: null
 
-DATALOADER:
-  PIN_MEMORY: False
-  DROP_LAST: False
-  PERSISTENT_WORKERS: False
+DATAMODULE:
+  DATALOADER:
+    PIN_MEMORY: False
+    DROP_LAST: False
+    PERSISTENT_WORKERS: False
 
-  TRAIN:
-    BATCH_SIZE: 0
-    NUM_WORKERS: 0
-    SHUFFLE: True  # Only TRAIN has this option
+    TRAIN:
+      BATCH_SIZE: 0
+      NUM_WORKERS: 0
+      SHUFFLE: True  # Only TRAIN has this option
 
-  VAL:
-    BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
-    NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
+    VAL:
+      BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
+      NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
 
-  TEST:
-    BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
-    NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
+    TEST:
+      BATCH_SIZE: 0  # If 0, it will be the same as TRAIN.BATCH_SIZE
+      NUM_WORKERS: 0 # If 0, it will be the same as TRAIN.NUM_WORKERS
 
-DATASET:
-  NAME: null
+  DATASET:
+    NAME: null
 
-  TRANSFORM:
+    TRANSFORM:
+      NAME: null
+
+  SAMPLER:
     NAME: null
 
 EVALUATOR:
@@ -61,11 +65,12 @@ TRAINER:
     ALGORITHM: null
     VALUE: null
 
-  DETERMINISTIC: False  # Set to True to enable cudnn.deterministic
-  BENCHMARK: False      # Set to True to enable cudnn.benchmark
-  PROFILER: null        # Set to `advanced` or `pytorch` to enable profiling
-  DETECT_ANOMALY: False # Set to True to enable anomaly detection
-  SYNC_BATCHNORM: False # Set to True to enable sync batchnorm
+  DETERMINISTIC: False          # Set to True to enable cudnn.deterministic
+  BENCHMARK: False              # Set to True to enable cudnn.benchmark
+  USE_DISTRIBUTED_SAMPLER: True # Usually, you don't need to change this
+  PROFILER: null                # Set to `advanced` or `pytorch` to enable profiling
+  DETECT_ANOMALY: False         # Set to True to enable anomaly detection
+  SYNC_BATCHNORM: False         # Set to True to enable sync batchnorm
 
 SEED: null
 OUTPUT_DIR: null

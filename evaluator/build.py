@@ -1,6 +1,6 @@
 from fvcore.common.registry import Registry
 from omegaconf import DictConfig
-import torch.nn
+import torch
 
 __all__ = [
     "EVALUATOR_REGISTRY",
@@ -15,7 +15,7 @@ def build_evaluator(cfg: DictConfig) -> torch.nn.Module:
     """
     Build the evaluator defined by `cfg.EVALUATOR.NAME`.
     """
-    evaluator_name = cfg.EVALUATOR.NAME
+    evaluator_name = getattr(cfg, "NAME", cfg.EVALUATOR.NAME)
     try:
         evaluator = EVALUATOR_REGISTRY.get(evaluator_name)(cfg)
     except KeyError as e:

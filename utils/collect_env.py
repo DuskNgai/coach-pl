@@ -4,10 +4,10 @@ import os
 import re
 import subprocess
 import sys
-import tabulate
 
 import numpy as np
 import PIL
+import tabulate
 import torch
 import torchvision
 

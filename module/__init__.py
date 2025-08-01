@@ -1,3 +1,6 @@
-from .build import MODULE_REGISTRY, build_module # noqa: F401
+from .build import (
+    build_module,
+    MODULE_REGISTRY,
+)
 
 __all__ = [k for k in globals().keys() if not k.startswith("_")]
