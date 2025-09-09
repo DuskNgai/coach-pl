@@ -1,6 +1,5 @@
 CRITERION:
   NAME: null
-  TYPE: null
 
 DATAMODULE:
   DATALOADER:
