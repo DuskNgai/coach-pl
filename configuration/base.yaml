@@ -46,16 +46,19 @@ MODULE:
     NAME: null
 
 TRAINER:
-  STRATEGY: auto        # Options: `auto`, `ddp`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
-  PRECISION: 32-true    # Options: `16-true`, `16-mixed`, `bf16-true`, `bf16-mixed`, `32-true`, `64-true`
+  FAST_DEV_RUN: False        # Set to True to enable `fast_dev_run` for debugging
+
+  STRATEGY: auto             # Options: `auto`, `ddp`, `deepspeed_stage_2`, `deepspeed_stage_3` ...
+  PRECISION: 32-true         # Options: `16-true`, `16-mixed`, `bf16-true`, `bf16-mixed`, `32-true`, `64-true`
   CHECKPOINT:
     EVERY_N_EPOCHS: 10
 
-    SAVE_BEST: False    # If True, monitor will be required
+    SAVE_BEST: False         # If True, monitor will be required
     MONITOR: null
-    MONITOR_MODE: min   # Options: `min` or `max`
+    MONITOR_MODE: min        # Options: `min` or `max`
 
-  MAX_EPOCHS: -1        # If profiler is enabled, this will be *automatically* set to 1
+  MAX_EPOCHS: -1             # If profiler is enabled, this will be *automatically* set to 1
+  LIMIT_VAL_BATCHES: 1.0     # Ratio of validation batches, set to 0.0 to disable
   NUM_SANITY_VAL_STEPS: 0
   LOG_EVERY_N_STEPS: 1
   ACCUMULATE_GRAD_BATCHES: 1
