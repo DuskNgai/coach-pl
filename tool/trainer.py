@@ -141,7 +141,7 @@ def build_training_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[p
     return trainer, timer
 
 
-def build_evaluating_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
+def build_evaluating_trainer(args: argparse.Namespace, cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     """
     Build a PyTorch Lightning Trainer for evaluation.
     """
@@ -150,6 +150,8 @@ def build_evaluating_trainer(cfg: DictConfig) -> tuple[pl.Trainer, Timer]:
     timer = Timer()
 
     trainer = pl.Trainer(
+        devices=args.num_gpus,
+        num_nodes=args.num_nodes,
         precision=cfg.TRAINER.PRECISION,
         logger=[TensorBoardLogger(output_dir, "tb_log")],
         callbacks=[timer],
