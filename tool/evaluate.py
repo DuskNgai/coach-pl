@@ -20,14 +20,14 @@ from .trainer import (
     setup_cfg,
 )
 
-# HACK: For torch.load(..., weights_only=False) used by DeepSpeed.
+# HACK: For torch.load(..., weights_only=False).
 
 _original_torch_load = torch.load
 
 
 @functools.wraps(_original_torch_load)
 def _trusted_torch_load(*args, **kwargs):
-    kwargs.setdefault("weights_only", False)
+    kwargs["weights_only"] = False
     return _original_torch_load(*args, **kwargs)
 
 
