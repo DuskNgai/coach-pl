@@ -10,7 +10,6 @@ from rich.console import (
 )
 from rich.containers import Renderables
 from rich.logging import (
-    FormatTimeCallable,
     LogRender,
     RichHandler,
 )
@@ -30,7 +29,7 @@ class _CustomLogRender(LogRender):
         console: "Console",
         renderables: Iterable["ConsoleRenderable"],
         log_time: datetime | None = None,
-        time_format: str | FormatTimeCallable | None = None,
+        time_format: str | None = None,
         level: TextType = "",
         path: str | None = None,
         line_no: str | None = None,
